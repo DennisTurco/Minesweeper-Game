@@ -1,5 +1,6 @@
 package game;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -27,9 +28,14 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener{
 		this.setSize(width + getInsets().left + getInsets().right, eight + getInsets().bottom + getInsets().top);
 		this.setResizable(false);
 		this.setLocationRelativeTo(null); // per far aprire la finestra a centro schermo
+		
+		ImageIcon image = new ImageIcon(""); //crea un'icona
+		setIconImage(image.getImage());	//cambia l'icona del frame
 	
 		screen = new Screen();
 		add(screen);
+		
+		GameMineField game = new GameMineField();
 	}
 	
 	
