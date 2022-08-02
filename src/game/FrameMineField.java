@@ -20,6 +20,10 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener{
 	public static int eight = 400;
 	
 	private Screen screen;
+	private WorldMineField world;
+	
+	private int insetLeft;
+	private int insetTop;
 	
 	// CONSTRUCTOR	
 	public FrameMineField () { 
@@ -29,58 +33,62 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener{
 		this.setResizable(false);
 		this.setLocationRelativeTo(null); // per far aprire la finestra a centro schermo
 		
-		ImageIcon image = new ImageIcon(""); //crea un'icona
+		ImageIcon image = new ImageIcon(".//res//bomb.png"); //crea un'icona
 		setIconImage(image.getImage());	//cambia l'icona del frame
 	
 		screen = new Screen();
 		add(screen);
 		
-		GameMineField game = new GameMineField();
+		world = new WorldMineField();
 	}
 	
 	
 	//KEYBOARD
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+		if(e.getKeyCode() == KeyEvent.VK_R)
+		{
+			world.reset();
+			screen.repaint();
+		}
 	}
 	
 	
 	// MOUSE
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		if(e.getButton() == 1) //world.left_click(e.getX() - insetLeft, e.getY() - insetTop);
+		if(e.getButton() == 3) //world.right_click(e.getX() - insetLeft, e.getY() - insetTop);
+		screen.repaint();
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	} 
 	
@@ -88,18 +96,19 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener{
 	public class Screen extends JPanel {
 		@Override
 		public void paintComponent(Graphics g) {
-			g.setColor(Color.RED);
-			g.fillRect(0, 0, 50, 50);
+			world.draw(g);
 		}
 	}
 	
 	
 	// GETTER
-	public int getWidth() {
-		return width;
-	}
-	public int getEight() {
+	public static int getEight() {
 		return eight;
 	}
+		
+	public static int getWidth() {
+		return width;
+	}
+	
 	
 }
