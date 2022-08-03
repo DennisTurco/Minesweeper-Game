@@ -1,15 +1,16 @@
 package game;
 
 import java.util.Random;
-import java.awt.GradientPaint;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Rectangle;
 
 class WorldMineField {
-	private static int COLS = 14;
-	private static int ROWS = 14;
-	private static int N_BOMBS = 35;
+	private static int COLS = 20; //14
+	private static int ROWS = 20;
+	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS) 
 	private static boolean dead;
 	private static boolean finish;
 	private static TileMineField[][] matrix;
@@ -17,11 +18,15 @@ class WorldMineField {
 	
 	private BufferedImage bomb_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/bomb.png"), TileMineField.getWidth(), TileMineField.getHeight());
 	private BufferedImage flag_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/flag.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage pressed_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/pressed.png"), TileMineField.getWidth(), TileMineField.getHeight());
+	private BufferedImage pressed_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res//pressed.png"), TileMineField.getWidth(), TileMineField.getHeight());
 	private BufferedImage normal_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
 	
 	//CONSTRUCTOR
 	public WorldMineField() {
+		
+		System.out.println("COLS*ROWS = " + COLS*ROWS);
+		System.out.println("N_BOMBS = " + N_BOMBS);
+		
 		matrix = new TileMineField[ROWS][COLS];
 		
 		// costruisco ogni cella
@@ -77,87 +82,76 @@ class WorldMineField {
 			
 		}	
 	}
+
 	
-	public boolean is_dead(TileMineField[][] matrix, int current_position) {
-		int index = 0;
-		for (int i=0; i<ROWS; i++) {
-			for (int j=0; j<COLS; j++) {
-				if (current_position == index && matrix[i][j].isBomb()) {
-					return true;
-				}
-				index++;
-			}
-		}
-		return false;
-	}
-	
-	public boolean is_alive(TileMineField[][] matrix, int current_position) {
-		if (is_dead(matrix, current_position)) return false;
-		else return true;
-	}
-	
-	//TODO: left_click()
 	public void left_click(int x, int y) {
-		if(dead == false && finish == false) {
-			int tileX = x/TileMineField.getWidth();
-			int tileY = y/TileMineField.getHeight();
+		if (dead == false && finish == false) {
 			
-			if(matrix[tileX][tileY].isFlag() == false) {
-				matrix[tileX][tileY].setOpened(true);
-				
-				if(matrix[tileX][tileY].isBomb()) dead = true;
-				else {
-					if(matrix[tileX][tileY].getAmountOfNearBombs() == 0) {
-						open(tileX, tileY);
-					}
-				}
-				
-				checkFinish();
-			}
+			int x_axis = x/TileMineField.getWidth();
+			int y_axis = y/TileMineField.getHeight();
+			
+			if (matrix[x_axis][y_axis].isOpened() == true) return;
+			else if (matrix[x_axis][y_axis].isBomb()) dead = true;
+			else if (matrix[x_axis][y_axis].isFlag()) return;
+			else if (matrix[x_axis][y_axis].getAmountOfNearBombs() == 0 && matrix[x_axis][y_axis].isBomb() == false) open(x_axis, y_axis);
+			
+			matrix[x_axis][y_axis].setOpened(true);
+			
+			checkFinish();
 		}
 	}
 	
-	//TODO: right_click()
 	public void right_click(int x, int y) {
 		if(dead == false && finish == false){
-			int tileX = x/TileMineField.getWidth(); // ottengo la corretta posizione in base allo schermo
-			int tileY = y/TileMineField.getHeight();
-			matrix[tileX][tileY].placeFlag(); //piazzo una flag nella posizione corretta
+			int x_axis = x/TileMineField.getWidth(); // ottengo la corretta posizione in base allo schermo
+			int y_axis = y/TileMineField.getHeight();
+			matrix[x_axis][y_axis].placeFlag(); //piazzo una flag nella posizione corretta
 			
 			checkFinish(); // controllo se il gioco è terminato
 		}
 		
 	}
 	
-	//TODO: checkFinish()
+	
 	private void checkFinish() {
-		finish = true;
-		outer : for(int x = 0;x < COLS;x++) {
-			for(int y = 0;y < ROWS;y++) {
-				if((matrix[x][y].isOpened() || (matrix[x][y].isBomb() && matrix[x][y].isFlag()) ) == false ) {
+		finish = true; 
+		for(int i = 0; i<COLS; i++) {
+			for(int j=0; j<ROWS; j++) {
+				if (matrix[i][j].isBomb() && matrix[i][j].isOpened()) {
+					dead = true;
+					return;
+				} 
+				if (matrix[i][j].isBomb() == false && matrix[i][j].isOpened() == false) { // se trovo una casella non bomba non aperta allora non è terminato
 					finish = false;
-					break outer;
+					return;
 				}
 			}
 		}
+		
+		
 	}
 	
 	public void reset() {
-		for(int x = 0; x<COLS; x++){
-			for(int y = 0;y < ROWS; y++){
-				matrix[x] [y].reset();
+		// azzero il campo da gioco
+		for(int i=0; i<COLS; i++){
+			for(int j=0; j<ROWS; j++){
+				matrix[i][j].reset();
 			}
 		}
 		
+		// azzero i booleani
 		dead = false;
 		finish = false;
 		
+		// ripiazzo le bombe e i numeri affianco
 		place_all_bombs();
 		set_numeber_of_near_bombs();
 	}
 	
 	
 	public void draw(Graphics g){
+		Font font = new Font("SansSerif", 0, FrameMineField.getScreenWidth()*10/100); // la scritta sarà con una grandezza del 10% della finestra di gioco
+		Rectangle rect = new Rectangle(FrameMineField.width, FrameMineField.height);
 		for(int x = 0;x < COLS;x++){
 			for(int y = 0;y < ROWS;y++){
 				matrix[x][y].draw(g);
@@ -166,13 +160,15 @@ class WorldMineField {
 		
 		if(dead){
 			g.setColor(Color.RED);
-			g.drawString("You're dead!", 10, 30);
+			FrameMineField.drawCenteredString(g, "You're dead!", rect, font);
 		}
 		else if(finish){
 			g.setColor(Color.GREEN);
-			g.drawString("You won!", 10, 30);
+			FrameMineField.drawCenteredString(g, "You Won!!", rect, font);
 		}
 	}
+	
+	
 	
 	//TODO: open()
 	private void open(int x, int y) {
