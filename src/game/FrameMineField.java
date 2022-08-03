@@ -35,7 +35,7 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener {
 		
 		world = new WorldMineField();
 		
-		this.setResizable(false);
+		this.setResizable(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addMouseListener(this);
 		addKeyListener(this);
@@ -51,7 +51,7 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener {
 		this.setLocationRelativeTo(null); // per far aprire la finestra a centro schermo
 		this.setVisible(true);
 		
-		ImageIcon image = new ImageIcon("res/bomb.png"); //crea un'icona
+		ImageIcon image = new ImageIcon(".//res//bomb.png"); //crea un'icona
 		setIconImage(image.getImage());	//cambia l'icona del frame
 
 	}
@@ -92,7 +92,8 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener {
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
-			
+		world.highlight(e.getX() - insetLeft, e.getY() - insetTop);
+		screen.repaint();
 	}
 	
 	@Override

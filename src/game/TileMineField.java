@@ -1,7 +1,9 @@
 package game;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public class TileMineField {
@@ -9,6 +11,7 @@ public class TileMineField {
 	private BufferedImage openedImage;
 	private BufferedImage flagImage;
 	private BufferedImage bombImage;
+	private BufferedImage bombImage_no_face;
 	
 	private int x;
 	private int y;
@@ -17,16 +20,26 @@ public class TileMineField {
 	private boolean flag;
 	private int amountOfNearBombs;
 	
+	Color color1 = new Color (25, 118, 210);	// blu
+	Color color2 = new Color (56, 142, 60); 	// verde
+	Color color3 = new Color (211, 47, 47); 	// rosso
+ 	Color color4 = new Color (123, 31, 162); 	// viola
+	Color color5 = new Color (245, 231, 0);		// giallo
+	Color color6 = new Color (181, 30, 142);	// ...
+	Color color7 = new Color (0, 80, 107);		// ...
+	Color color8 = new Color (0, 0, 0);			// nero
+	
 	private static int width = FrameMineField.getScreenWidth()/WorldMineField.getROWS(); 
 	private static int height = FrameMineField.getScreenHeight()/WorldMineField.getCOLS(); 
 	
-	public TileMineField(int x, int y, BufferedImage normal, BufferedImage bomb, BufferedImage openedImage, BufferedImage flag) {
+	public TileMineField(int x, int y, BufferedImage normal, BufferedImage bomb, BufferedImage bomb_no_face, BufferedImage openedImage, BufferedImage flag) {
 		this.x = x;
 		this.y = y;
 		this.normal = normal;
 		this.bombImage = bomb;
 		this.openedImage = openedImage;
 		this.flagImage = flag;
+		this.bombImage_no_face = bomb_no_face;
 	}
 	
 	public void setOpenedImage(BufferedImage openedImage) {
@@ -87,8 +100,20 @@ public class TileMineField {
 			else {
 				g.drawImage(openedImage, x * width, y * height, null);
 				if(amountOfNearBombs > 0) {
-					g.setColor(Color.WHITE);
+					
+					if (amountOfNearBombs == 1) g.setColor(color1);
+					else if (amountOfNearBombs == 2) g.setColor(color2);
+					else if (amountOfNearBombs == 3) g.setColor(color3); 
+					else if (amountOfNearBombs == 4) g.setColor(color4);
+					else if (amountOfNearBombs == 5) g.setColor(color5);
+					else if (amountOfNearBombs == 6) g.setColor(color6);
+					else if (amountOfNearBombs == 7) g.setColor(color7);
+					else g.setColor(color8);
+					
 					g.drawString("" + amountOfNearBombs, x * width + 7, y * height + height - 4);
+					/*Font font = new Font("SansSerif", Font.BOLD, width/WorldMineField.getCOLS() - width/WorldMineField.getCOLS()*50/100); // la scritta sarà con una grandezza del 10% della finestra di gioco
+					Rectangle rect = new Rectangle(width/WorldMineField.getCOLS(), height/WorldMineField.getROWS());
+					FrameMineField.drawCenteredString(g, "" + amountOfNearBombs, rect, font);*/
 				}
 			}
 		}

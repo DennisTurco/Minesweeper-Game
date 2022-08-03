@@ -1,6 +1,10 @@
 package game;
 
 import java.util.Random;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Color;
@@ -8,19 +12,23 @@ import java.awt.Font;
 import java.awt.Rectangle;
 
 class WorldMineField {
-	private static int COLS = 20; //14
-	private static int ROWS = 20;
-	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS) 
+	private static int COLS = 3;
+	private static int ROWS = 3;
+	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
 	private static boolean dead;
 	private static boolean finish;
 	private static TileMineField[][] matrix;
 	
+	// scalo le immagini in base alla dimensione dello schermo
 	
 	private BufferedImage bomb_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/bomb.png"), TileMineField.getWidth(), TileMineField.getHeight());
+	private BufferedImage bomb_no_face_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/bomb_no_face.png"), TileMineField.getWidth(), TileMineField.getHeight());
 	private BufferedImage flag_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/flag.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage pressed_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res//pressed.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage normal_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	
+	private BufferedImage pressed_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_brown_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
+	private BufferedImage pressed2_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_brown2_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
+	private BufferedImage normal_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_green_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
+	private BufferedImage normal2_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_green2_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
+
 	//CONSTRUCTOR
 	public WorldMineField() {
 		
@@ -30,9 +38,19 @@ class WorldMineField {
 		matrix = new TileMineField[ROWS][COLS];
 		
 		// costruisco ogni cella
+		boolean tile_switch = false;
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
-				matrix[i][j] = new TileMineField(i, j, normal_img, bomb_img, pressed_img, flag_img);
+				if (tile_switch == false) {
+					matrix[i][j] = new TileMineField(i, j, normal_img, bomb_no_face_img, bomb_img, pressed_img, flag_img);
+					tile_switch = true;
+				}
+				else {
+					matrix[i][j] = new TileMineField(i, j, normal2_img, bomb_no_face_img, bomb_img, pressed2_img, flag_img);
+					tile_switch = false;
+				}
+				
+				
 			}
 			
 		}
@@ -91,7 +109,10 @@ class WorldMineField {
 			int y_axis = y/TileMineField.getHeight();
 			
 			if (matrix[x_axis][y_axis].isOpened() == true) return;
-			else if (matrix[x_axis][y_axis].isBomb()) dead = true;
+			else if (matrix[x_axis][y_axis].isBomb()) {
+				dead = true;
+				showAllBombs();
+			}
 			else if (matrix[x_axis][y_axis].isFlag()) return;
 			else if (matrix[x_axis][y_axis].getAmountOfNearBombs() == 0 && matrix[x_axis][y_axis].isBomb() == false) open(x_axis, y_axis);
 			
@@ -112,6 +133,16 @@ class WorldMineField {
 		
 	}
 	
+	public void highlight (int x, int y) {
+		if(dead == false && finish == false){
+			int x_axis = x/TileMineField.getWidth(); // ottengo la corretta posizione in base allo schermo
+			int y_axis = y/TileMineField.getHeight();
+			
+			matrix[x_axis][y_axis].placeFlag(); //piazzo una flag nella posizione corretta
+		}
+		
+	}
+	
 	
 	private void checkFinish() {
 		finish = true; 
@@ -128,6 +159,10 @@ class WorldMineField {
 			}
 		}
 		
+		// se siamo arrivati qui significa che il giocatore ha vinto
+		JFrame frame = new JFrame();
+	    Object result = JOptionPane.showInputDialog(frame, "Enter your name:");
+	    System.out.println(result);
 		
 	}
 	
@@ -160,7 +195,7 @@ class WorldMineField {
 		
 		if(dead){
 			g.setColor(Color.RED);
-			FrameMineField.drawCenteredString(g, "You're dead!", rect, font);
+			FrameMineField.drawCenteredString(g, "Game Over!", rect, font);
 		}
 		else if(finish){
 			g.setColor(Color.GREEN);
@@ -178,7 +213,7 @@ class WorldMineField {
 			int mx = x - 1;
 			int gx = x + 1;
 			int my = y - 1;
-			int gy = y + 1;			
+			int gy = y + 1;
 
 			if(mx>=0 && my>=0 && matrix[mx][my].canOpen()) open(mx, my);
 			if(mx>=0 && matrix[mx][y].canOpen()) open(mx, y);
@@ -192,6 +227,16 @@ class WorldMineField {
 			if(gx<COLS && gy<ROWS && matrix[gx][gy].canOpen()) open(gx, gy);
 		}
 	}
+	
+	public void showAllBombs () {
+		for (int i=0; i<ROWS; i++) {
+			for (int j=0; j<COLS; j++) {
+				if (matrix[i][j].isBomb()) matrix[i][j].setOpened(true);
+			}
+		}
+	}
+	
+	
 	
 	public static int getCOLS() {
 		return COLS;
