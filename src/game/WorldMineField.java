@@ -2,18 +2,25 @@ package game;
 
 import java.util.Random;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
 
 class WorldMineField {
-	private static int COLS = 3;
-	private static int ROWS = 3;
+	private static int COLS = 17;
+	private static int ROWS = 17;
 	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
 	private static boolean dead;
 	private static boolean finish;
@@ -29,6 +36,14 @@ class WorldMineField {
 	private BufferedImage normal_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_green_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
 	private BufferedImage normal2_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_green2_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
 
+	//TODO: aggiungere la texture di un fiore da inserire quando si vince
+	//TODO: aggiungere i suoni e migliorarli
+	//TODO: aggiungere il punteggio
+	//TODO: aggiungere il tempo trascorso
+	//TODO: aggiungere la possibilità di cambiare difficoltà
+	//TODO: aggiungere delay tra le immagini
+	//TODO: aggiungere hover sulle caselle selezionate
+	
 	//CONSTRUCTOR
 	public WorldMineField() {
 		
@@ -78,6 +93,18 @@ class WorldMineField {
 		
 	}
 	
+	public void showNumberOfFlag() {
+		int count = 0;
+		for (int i=0; i<ROWS; i++) {
+			for (int j=0; j<COLS; j++) {
+				if (matrix[i][j].isFlag() && matrix[i][j].isOpened()==false) count++;
+			}
+		}
+		
+		System.out.println("Flag remaining: " + (N_BOMBS-count));
+		
+	}
+	
 	private void set_numeber_of_near_bombs() {
 		int number_of_near_bombs = 0;
 		for (int i=0; i<COLS; i++) {
@@ -118,6 +145,13 @@ class WorldMineField {
 			
 			matrix[x_axis][y_axis].setOpened(true);
 			
+			// sound
+			try {
+				openSound(".//res//buttonEffect.wav");
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+				e.printStackTrace();
+			}
+			
 			checkFinish();
 		}
 	}
@@ -128,9 +162,26 @@ class WorldMineField {
 			int y_axis = y/TileMineField.getHeight();
 			matrix[x_axis][y_axis].placeFlag(); //piazzo una flag nella posizione corretta
 			
+			showNumberOfFlag(); // ricalcola il numero di flag
+			
+			// sound
+			try {
+				openSound(".//res//buttonEffect.wav");
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+				e.printStackTrace();
+			}
+			
 			checkFinish(); // controllo se il gioco è terminato
 		}
 		
+	}
+	
+	public void openSound(String path) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+		File file = new File(path);
+		AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+		Clip clip = AudioSystem.getClip();
+		clip.open(audioStream);
+		clip.start();
 	}
 	
 	public void highlight (int x, int y) {

@@ -35,7 +35,7 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener {
 		
 		world = new WorldMineField();
 		
-		this.setResizable(true);
+		this.setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addMouseListener(this);
 		addKeyListener(this);
@@ -92,8 +92,8 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener {
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		world.highlight(e.getX() - insetLeft, e.getY() - insetTop);
-		screen.repaint();
+		//world.highlight(e.getX() - insetLeft, e.getY() - insetTop);
+		//screen.repaint();
 	}
 	
 	@Override
