@@ -19,17 +19,20 @@ import java.awt.Font;
 import java.awt.Rectangle;
 
 class WorldMineField {
-	private static int COLS = 17;
-	private static int ROWS = 17;
+	private static int COLS = 15;
+	private static int ROWS = 15;
 	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
+	private static int N_FLAGS = N_BOMBS;
+	private static int SCORE;
+	private static int TIMER = 0;
 	private static boolean dead;
 	private static boolean finish;
 	private static TileMineField[][] matrix;
 	
 	// scalo le immagini in base alla dimensione dello schermo
 	
-	private BufferedImage bomb_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/bomb.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage bomb_no_face_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/bomb_no_face.png"), TileMineField.getWidth(), TileMineField.getHeight());
+	private BufferedImage bomb_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/bomb_face.png"), TileMineField.getWidth(), TileMineField.getHeight());
+	private BufferedImage bomb_no_face_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/bomb.png"), TileMineField.getWidth(), TileMineField.getHeight());
 	private BufferedImage flag_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/flag.png"), TileMineField.getWidth(), TileMineField.getHeight());
 	private BufferedImage pressed_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_brown_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
 	private BufferedImage pressed2_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_brown2_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
@@ -101,8 +104,8 @@ class WorldMineField {
 			}
 		}
 		
+		N_FLAGS = N_BOMBS-count;
 		System.out.println("Flag remaining: " + (N_BOMBS-count));
-		
 	}
 	
 	private void set_numeber_of_near_bombs() {
@@ -138,19 +141,34 @@ class WorldMineField {
 			if (matrix[x_axis][y_axis].isOpened() == true) return;
 			else if (matrix[x_axis][y_axis].isBomb()) {
 				dead = true;
+				
 				showAllBombs();
+				//TODO: ahhiungere anche removeWrongFlags
+				
+				matrix[x_axis][y_axis].setBomb(false); // tolgo l'immagine di default della bomba
+				matrix[x_axis][y_axis].setBombFace(true); // aggiungo la bomba con la faccia nella posizione attuale
+				
+				// sound
+				try {
+					openSound(".//res//buttonEffect.wav");
+				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+					e.printStackTrace();
+				}
 			}
 			else if (matrix[x_axis][y_axis].isFlag()) return;
 			else if (matrix[x_axis][y_axis].getAmountOfNearBombs() == 0 && matrix[x_axis][y_axis].isBomb() == false) open(x_axis, y_axis);
 			
 			matrix[x_axis][y_axis].setOpened(true);
 			
-			// sound
-			try {
-				openSound(".//res//buttonEffect.wav");
-			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-				e.printStackTrace();
+			if (!dead) {
+				// sound
+				try {
+					openSound(".//res//placeflag.wav");
+				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+					e.printStackTrace();
+				}
 			}
+			
 			
 			checkFinish();
 		}
@@ -166,7 +184,7 @@ class WorldMineField {
 			
 			// sound
 			try {
-				openSound(".//res//buttonEffect.wav");
+				openSound(".//res//placeflag.wav");
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 				e.printStackTrace();
 			}
@@ -182,16 +200,6 @@ class WorldMineField {
 		Clip clip = AudioSystem.getClip();
 		clip.open(audioStream);
 		clip.start();
-	}
-	
-	public void highlight (int x, int y) {
-		if(dead == false && finish == false){
-			int x_axis = x/TileMineField.getWidth(); // ottengo la corretta posizione in base allo schermo
-			int y_axis = y/TileMineField.getHeight();
-			
-			matrix[x_axis][y_axis].placeFlag(); //piazzo una flag nella posizione corretta
-		}
-		
 	}
 	
 	
@@ -214,6 +222,8 @@ class WorldMineField {
 		JFrame frame = new JFrame();
 	    Object result = JOptionPane.showInputDialog(frame, "Enter your name:");
 	    System.out.println(result);
+	    
+	    System.out.println("Score = " + SCORE);
 		
 	}
 	
@@ -282,9 +292,14 @@ class WorldMineField {
 	public void showAllBombs () {
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
-				if (matrix[i][j].isBomb()) matrix[i][j].setOpened(true);
+				if ((matrix[i][j].isBomb() || matrix[i][j].isBombFace()) && matrix[i][j].isFlag() == false) matrix[i][j].setOpened(true);
 			}
 		}
+	}
+	
+	//TODO: aggiungere
+	public void score() {
+		SCORE = COLS*ROWS / TIMER;
 	}
 	
 	
@@ -295,6 +310,14 @@ class WorldMineField {
 	
 	public static int getROWS() {
 		return ROWS;
+	} 
+	
+	public static int getN_BOMBS() {
+		return N_BOMBS;
+	} 
+	
+	public static int getN_FLAGS() {
+		return N_FLAGS;
 	} 
 	
 }

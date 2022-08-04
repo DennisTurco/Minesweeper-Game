@@ -11,11 +11,12 @@ public class TileMineField {
 	private BufferedImage openedImage;
 	private BufferedImage flagImage;
 	private BufferedImage bombImage;
-	private BufferedImage bombImage_no_face;
+	private BufferedImage bombImage_face;
 	
 	private int x;
 	private int y;
 	private boolean bomb;
+	private boolean bomb_face;
 	private boolean opened;
 	private boolean flag;
 	private int amountOfNearBombs;
@@ -32,14 +33,14 @@ public class TileMineField {
 	private static int width = FrameMineField.getScreenWidth()/WorldMineField.getROWS(); 
 	private static int height = FrameMineField.getScreenHeight()/WorldMineField.getCOLS(); 
 	
-	public TileMineField(int x, int y, BufferedImage normal, BufferedImage bomb, BufferedImage bomb_no_face, BufferedImage openedImage, BufferedImage flag) {
+	public TileMineField(int x, int y, BufferedImage normal, BufferedImage bomb, BufferedImage bomb_face, BufferedImage openedImage, BufferedImage flag) {
 		this.x = x;
 		this.y = y;
 		this.normal = normal;
 		this.bombImage = bomb;
 		this.openedImage = openedImage;
 		this.flagImage = flag;
-		this.bombImage_no_face = bomb_no_face;
+		this.bombImage_face = bomb_face;
 	}
 	
 	public void setOpenedImage(BufferedImage openedImage) {
@@ -58,8 +59,16 @@ public class TileMineField {
 		this.bomb = bomb;
 	}
 	
+	public void setBombFace(boolean bomb) {
+		this.bomb_face = bomb;
+	}
+	
 	public boolean isBomb() {
 		return bomb;
+	}
+	
+	public boolean isBombFace() {
+		return bomb_face;
 	}
 	
 	public void setAmountOfNearBombs(int amountOfNearBombs) {
@@ -77,7 +86,7 @@ public class TileMineField {
 	public void placeFlag() {
 		if(flag) flag = false;
 		else{
-			if(!opened) flag = true;
+			if(!opened && WorldMineField.getN_FLAGS() > 0) flag = true; // metto la bandiera solo se la casella non è già aperta e non ho raggiunto il numero massimo di bandiere inseribili
 		}
 	}
 	
@@ -89,6 +98,7 @@ public class TileMineField {
 		flag = false;
 		bomb = false;
 		opened = false;
+		bomb_face = false;
 	}
 
 	public void draw(Graphics g) {
@@ -97,6 +107,7 @@ public class TileMineField {
 			else g.drawImage(flagImage, x * width, y * height, null);
 		} else {
 			if(bomb) g.drawImage(bombImage, x * width, y * height, null);
+			else if(bomb_face) g.drawImage(bombImage_face, x * width, y * height, null);
 			else {
 				g.drawImage(openedImage, x * width, y * height, null);
 				if(amountOfNearBombs > 0) {
