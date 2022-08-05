@@ -42,6 +42,7 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 	
 	private static JLabel flags_number;
 	private static JLabel tiles_number;
+	private static JLabel score_number;
 	
 	private int insetLeft;
 	private int insetTop;
@@ -62,9 +63,10 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 		
 		tiles_number = new JLabel("Tiles = ");
 		flags_number = new JLabel("Flags = ");
+		score_number = new JLabel("Score = ");
 		tool_bar.add(tiles_number);
 		tool_bar.add(flags_number);
-		
+		tool_bar.add(score_number);
 		
 		
 		//TODO: farla funzionare nella classe a parte richiamandola
@@ -171,13 +173,11 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 	
 	
 	// GETTER
-	public static int getScreenWidth()
-	{
+	public static int getScreenWidth(){
 		return width;
 	}
 	
-	public static int getScreenHeight()
-	{
+	public static int getScreenHeight(){
 		return width;
 	}
 	
@@ -189,6 +189,10 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 	public static void setTilesNumber(int value) {
 		tiles_number.setText("Tiles = " + value);
 	}
+	
+	public static void setScore(int value) {
+		score_number.setText("       Score = " + value);
+	} 
 	
 	// MOUSE
 	@Override

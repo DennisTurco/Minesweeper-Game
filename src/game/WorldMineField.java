@@ -21,9 +21,9 @@ import java.awt.Rectangle;
 class WorldMineField {
 	private static int COLS = 15;
 	private static int ROWS = 15;
-	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
+	private static int N_BOMBS = 1;//COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
 	private static int N_FLAGS = N_BOMBS;
-	private static int SCORE;
+	private static int SCORE = 0;
 	private static int TIMER = 0;
 	private static boolean dead;
 	private static boolean finish;
@@ -170,6 +170,7 @@ class WorldMineField {
 			
 			
 			checkFinish();
+			score();
 		}
 	}
 	
@@ -243,9 +244,10 @@ class WorldMineField {
 		set_numeber_of_near_bombs();
 		
 		// resetto i valori nella ToolBar
-		FrameMineField.setFlagsNumber(N_FLAGS);
+		FrameMineField.setFlagsNumber(N_BOMBS);
 		FrameMineField.setTilesNumber(COLS*ROWS);
-		
+		FrameMineField.setScore(0);
+			
 	}
 	
 	
@@ -311,7 +313,17 @@ class WorldMineField {
 	
 	//TODO: aggiungere
 	public void score() {
-		SCORE = COLS*ROWS / TIMER;
+		int score = 0;
+		for (int i=0; i<ROWS; i++) {
+			for (int j=0; j<COLS; j++) {
+				if (matrix[i][j].isOpened() == true && matrix[i][j].isBomb() == false && matrix[i][j].isBombFace() == false) score++;
+			}
+		}
+		
+		if (dead == false && finish == true) score += N_BOMBS; // caso in cui il giocatore ha vinto
+		
+		SCORE = score;
+		FrameMineField.setScore(SCORE);
 	}
 	
 	
