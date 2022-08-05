@@ -68,7 +68,6 @@ class WorldMineField {
 					tile_switch = false;
 				}
 				
-				
 			}
 			
 		}
@@ -105,7 +104,7 @@ class WorldMineField {
 		}
 		
 		N_FLAGS = N_BOMBS-count;
-		System.out.println("Flag remaining: " + (N_BOMBS-count));
+		FrameMineField.setFlagsNumber(N_FLAGS);
 	}
 	
 	private void set_numeber_of_near_bombs() {
@@ -242,6 +241,11 @@ class WorldMineField {
 		// ripiazzo le bombe e i numeri affianco
 		place_all_bombs();
 		set_numeber_of_near_bombs();
+		
+		// resetto i valori nella ToolBar
+		FrameMineField.setFlagsNumber(N_FLAGS);
+		FrameMineField.setTilesNumber(COLS*ROWS);
+		
 	}
 	
 	
@@ -293,6 +297,14 @@ class WorldMineField {
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
 				if ((matrix[i][j].isBomb() || matrix[i][j].isBombFace()) && matrix[i][j].isFlag() == false) matrix[i][j].setOpened(true);
+			}
+		}
+	}
+	
+	public void removeAllFlags() {
+		for (int i=0; i<ROWS; i++) {
+			for (int j=0; j<COLS; j++) {
+				if (matrix[i][j].isFlag()) matrix[i][j].placeFlag();
 			}
 		}
 	}

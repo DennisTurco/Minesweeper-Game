@@ -1,16 +1,21 @@
 package game;
 
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
-import java.awt.Color;
 import java.awt.BorderLayout;
-import java.awt.Label;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -22,91 +27,119 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-import java.awt.MenuBar;
-import java.awt.Menu;
-import java.awt.MenuItem;
-
-
-class FrameMineField extends JFrame implements MouseListener, KeyListener, WindowListener, ActionListener{
+@SuppressWarnings("serial")
+class FrameMineField extends JFrame implements MouseListener, WindowListener, ActionListener{
 	
-	public static int width = 700; 
-	public static int height = 700;
+	public static int width = 600; 
+	public static int height = 600;
 	
 	private Screen screen;
 	private WorldMineField world;
-	private MenuMineField menu;
 	private Font font;
+	
+	private JMenuBar menu_bar;
+	private JToolBar tool_bar;
+	
+	private static JLabel flags_number;
+	private static JLabel tiles_number;
 	
 	private int insetLeft;
 	private int insetTop;
 	
-	private Label lblDisplay;
-	
 	// CONSTRUCTOR	
 	public FrameMineField () { 
 		
-		world = new WorldMineField();
-		menu = new MenuMineField();
-	
+		
 		addMouseListener(this);
-		addKeyListener(this);
 		
 		screen = new Screen();
-		add(screen);
+		this.setLayout(new BorderLayout());
+		add(screen, BorderLayout.CENTER);
 		
-		this.setTitle("MineField");
-		this.setResizable(false);
+		// ToolBar
+		tool_bar = new JToolBar();
+		this.add(tool_bar, BorderLayout.PAGE_START);
 		
-		this.setLocationRelativeTo(null); // per far aprire la finestra a centro schermo
-		this.setVisible(true);
+		tiles_number = new JLabel("Tiles = ");
+		flags_number = new JLabel("Flags = ");
+		tool_bar.add(tiles_number);
+		tool_bar.add(flags_number);
 		
-		ImageIcon image = new ImageIcon(".//res//bomb.png"); //crea un'icona
-		setIconImage(image.getImage());	//cambia l'icona del frame
 		
 		
 		//TODO: farla funzionare nella classe a parte richiamandola
 		addWindowListener(this);
 		
-		// South Label 
-		lblDisplay = new Label();
-		lblDisplay.setBackground(Color.LIGHT_GRAY);
-		add(BorderLayout.SOUTH, lblDisplay);
-		
 		// Menu Bar
-		MenuBar AwtMenuBar = new MenuBar();
-		setMenuBar(AwtMenuBar);
+		menu_bar = new JMenuBar();
+		setJMenuBar(menu_bar);
 		
 		// Menus
-		Menu mnuGame = new Menu("Game");
-		Menu mnuOptions = new Menu("Options");
-		AwtMenuBar.add(mnuGame);
-		AwtMenuBar.add(mnuOptions);
+		JMenu mnuGame = new JMenu("Game");
+		JMenu mnuOptions = new JMenu("Options");
+		menu_bar.add(mnuGame);
+		menu_bar.add(mnuOptions);
 		
 		// Menu Items
-		MenuItem new_game = new MenuItem("New Game");
-		MenuItem remove_all_flags = new MenuItem("Remove all flags");
-		MenuItem quit = new MenuItem("Quit");
-		
+		JMenuItem restart = new JMenuItem("Restart");
+		JMenuItem new_game = new JMenuItem("New game");
+		JMenuItem remove_all_flags = new JMenuItem("Remove all flags");
+		JMenuItem scoreboard = new JMenuItem("Scoreboard");
+		JMenuItem quit = new JMenuItem("Quit");
+		JCheckBoxMenuItem sounds = new JCheckBoxMenuItem("Sounds Effect"); 
+		JCheckBoxMenuItem music = new JCheckBoxMenuItem("Music");
+		mnuGame.add(restart);
 		mnuGame.add(new_game);
 		mnuGame.add(remove_all_flags);
+		mnuGame.add(scoreboard);
+		mnuOptions.add(music);
+		mnuOptions.add(sounds);
 		mnuOptions.add(quit);
 		
+		sounds.setSelected(true);
+		music.setSelected(true);
+		
 		// Action Command
+		restart.setActionCommand("Restart");
 		new_game.setActionCommand("New Game");
 		remove_all_flags.setActionCommand("Remove All Flags");
+		scoreboard.setActionCommand("Scoreboard");
 		quit.setActionCommand("Quit");
+		sounds.setActionCommand("Sounds Effect");
+		music.setActionCommand("Music");
 		
 		// Action Listener
+		restart.addActionListener(this);
 		new_game.addActionListener(this);
 		remove_all_flags.addActionListener(this);
+		scoreboard.addActionListener(this);
 		quit.addActionListener(this);
+		sounds.addActionListener(this);
+		music.addActionListener(this);
+		
+		// Acceleration
+		restart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK)); // ctrl+r
+		remove_all_flags.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK)); // ctrl+f
+		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK)); // alt+f4
+		
+		
+		
+		world = new WorldMineField();
+		
+		this.setTitle("MineField");
+		this.setResizable(false);
+		this.setLocation(650, 200); // per far aprire la finestra a centro schermo
+		this.setVisible(true);
+		
+		ImageIcon image = new ImageIcon(".//res//bomb.png"); //crea un'icona
+		setIconImage(image.getImage());	//cambia l'icona del frame
 		
 		// Setting Borders
 		pack();
 		insetLeft = getInsets().left;
 		insetTop = getInsets().top;
-		setSize(width + insetLeft + getInsets().right, height + getInsets().bottom + insetTop);
-		
+		setSize(width + insetLeft + getInsets().right, height + getInsets().bottom + insetTop + menu_bar.getHeight() + tool_bar.getHeight());
+
 	}
 	
 	
@@ -148,25 +181,14 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener, Windo
 		return width;
 	}
 	
-	//KEYBOARD
-	@Override
-	public void keyTyped(KeyEvent e) {
-		
+	// SETTER
+	public static void setFlagsNumber(int value) {
+		flags_number.setText("       Flags = " + value);
 	}
 	
-	@Override
-	public void keyPressed(KeyEvent e) {
-			
+	public static void setTilesNumber(int value) {
+		tiles_number.setText("Tiles = " + value);
 	}
-	
-	@Override
-	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_R) {
-			world.reset();
-			screen.repaint();
-		}
-	}
-	
 	
 	// MOUSE
 	@Override
@@ -176,15 +198,13 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener, Windo
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if(e.getButton() == 1) world.left_click(e.getX() - insetLeft, e.getY() - insetTop);
-		if(e.getButton() == 3) world.right_click(e.getX() - insetLeft, e.getY() - insetTop);
+		if(e.getButton() == 1) world.left_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
+		if(e.getButton() == 3) world.right_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
 		screen.repaint();
 	}
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		//world.highlight(e.getX() - insetLeft, e.getY() - insetTop);
-		//screen.repaint();
 	}
 	
 	@Override
@@ -240,8 +260,18 @@ class FrameMineField extends JFrame implements MouseListener, KeyListener, Windo
 
 	@Override
 	public void actionPerformed(ActionEvent e) {	
-		System.out.println("entrato");
-		world.reset();
+		String command = e.getActionCommand();
+		
+		if(command.equals("Restart")) world.reset();
+		else if (command.equals("New Game")); //TODO: add
+		else if (command.equals("Remove All Flags")) world.removeAllFlags();
+		else if (command.equals("Scoreboard")); //TODO: add
+		else if (command.equals("Quit")) System.exit(EXIT_ON_CLOSE);
+		else if (command.equals("Sounds Effect")); //TODO: add
+		else if (command.equals("Music")); //TODO: add
+		else return;
+		
+		screen.repaint();
 	}
 	
 }

@@ -122,9 +122,6 @@ public class TileMineField {
 					else g.setColor(color8);
 					
 					g.drawString("" + amountOfNearBombs, x * width + 7, y * height + height - 4);
-					/*Font font = new Font("SansSerif", Font.BOLD, width/WorldMineField.getCOLS() - width/WorldMineField.getCOLS()*50/100); // la scritta sarà con una grandezza del 10% della finestra di gioco
-					Rectangle rect = new Rectangle(width/WorldMineField.getCOLS(), height/WorldMineField.getROWS());
-					FrameMineField.drawCenteredString(g, "" + amountOfNearBombs, rect, font);*/
 				}
 			}
 		}
