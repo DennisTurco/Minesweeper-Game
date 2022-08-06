@@ -21,7 +21,7 @@ import java.awt.Rectangle;
 class WorldMineField {
 	private static int COLS = 15;
 	private static int ROWS = 15;
-	private static int N_BOMBS = 1;//COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
+	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
 	private static int N_FLAGS = N_BOMBS;
 	private static int SCORE = 0;
 	private static int TIMER = 0;
@@ -49,6 +49,7 @@ class WorldMineField {
 	//CONSTRUCTOR
 	public WorldMineField() {
 		
+		
 		System.out.println("COLS*ROWS = " + COLS*ROWS);
 		System.out.println("N_BOMBS = " + N_BOMBS);
 		
@@ -75,13 +76,13 @@ class WorldMineField {
 		
 	}
 	
-	private void place_all_bombs() {
+	private static void place_all_bombs() {
 		for (int i=0; i<N_BOMBS; i++) { 
 			place_bomb();
 		}
 	}
 	
-	private void place_bomb() {
+	private static void place_bomb() {
 		Random random = new Random();
 		int tileX = random.nextInt(COLS);
 		int tileY = random.nextInt(ROWS);
@@ -104,29 +105,6 @@ class WorldMineField {
 		
 		N_FLAGS = N_BOMBS-count;
 		FrameMineField.setFlagsNumber(N_FLAGS);
-	}
-	
-	private void set_numeber_of_near_bombs() {
-		int number_of_near_bombs = 0;
-		for (int i=0; i<COLS; i++) {
-			for (int j=0; j<ROWS; j++) {
-				if (!matrix[i][j].isBomb()) { // non mi trovo sulla bomba
-					if (j+1 < ROWS) if (matrix[i][j+1].isBomb()) number_of_near_bombs++; // controllo a dx
-					if (j-1 >= 0) 	if (matrix[i][j-1].isBomb()) number_of_near_bombs++; // controllo a sx
-					if (i+1 < COLS) if (matrix[i+1][j].isBomb()) number_of_near_bombs++;	// controllo in basso
-					if (i-1 >= 0) 	if (matrix[i-1][j].isBomb()) number_of_near_bombs++; // controllo in alto
-					if (i-1 >= 0 && j+1 < ROWS) 	if (matrix[i-1][j+1].isBomb()) number_of_near_bombs++; // controllo in alto a dx
-					if (i-1 >= 0 && j-1 >= 0) 		if (matrix[i-1][j-1].isBomb()) number_of_near_bombs++; // controllo in alto a sx
-					if (i+1 < COLS && j+1 < ROWS) 	if (matrix[i+1][j+1].isBomb()) number_of_near_bombs++; // controllo in basso a dx
-					if (i+1 < COLS && j-1 >= 0) 	if (matrix[i+1][j-1].isBomb()) number_of_near_bombs++; // controllo in basso a sx
-					
-					matrix[i][j].setAmountOfNearBombs(number_of_near_bombs);
-					number_of_near_bombs = 0;
-				}
-				
-			}
-			
-		}	
 	}
 
 	
@@ -229,7 +207,7 @@ class WorldMineField {
 		
 	}
 	
-	public void reset() {
+	public static void reset() {
 		// azzero il campo da gioco
 		for(int i=0; i<COLS; i++){
 			for(int j=0; j<ROWS; j++){
@@ -331,7 +309,7 @@ class WorldMineField {
 	}
 	
 	
-	
+	// GETTER
 	public static int getCOLS() {
 		return COLS;
 	}
@@ -347,5 +325,39 @@ class WorldMineField {
 	public static int getN_FLAGS() {
 		return N_FLAGS;
 	} 
+	
+	// SETTER
+	public static void setCOLS(int value) {
+		COLS = value;
+		reset();
+	}
+	
+	public static void setROWS(int value) {
+		ROWS = value;
+		reset();
+	}
+	
+	private static void set_numeber_of_near_bombs() {
+		int number_of_near_bombs = 0;
+		for (int i=0; i<COLS; i++) {
+			for (int j=0; j<ROWS; j++) {
+				if (!matrix[i][j].isBomb()) { // non mi trovo sulla bomba
+					if (j+1 < ROWS) if (matrix[i][j+1].isBomb()) number_of_near_bombs++; // controllo a dx
+					if (j-1 >= 0) 	if (matrix[i][j-1].isBomb()) number_of_near_bombs++; // controllo a sx
+					if (i+1 < COLS) if (matrix[i+1][j].isBomb()) number_of_near_bombs++;	// controllo in basso
+					if (i-1 >= 0) 	if (matrix[i-1][j].isBomb()) number_of_near_bombs++; // controllo in alto
+					if (i-1 >= 0 && j+1 < ROWS) 	if (matrix[i-1][j+1].isBomb()) number_of_near_bombs++; // controllo in alto a dx
+					if (i-1 >= 0 && j-1 >= 0) 		if (matrix[i-1][j-1].isBomb()) number_of_near_bombs++; // controllo in alto a sx
+					if (i+1 < COLS && j+1 < ROWS) 	if (matrix[i+1][j+1].isBomb()) number_of_near_bombs++; // controllo in basso a dx
+					if (i+1 < COLS && j-1 >= 0) 	if (matrix[i+1][j-1].isBomb()) number_of_near_bombs++; // controllo in basso a sx
+					
+					matrix[i][j].setAmountOfNearBombs(number_of_near_bombs);
+					number_of_near_bombs = 0;
+				}
+				
+			}
+			
+		}	
+	}
 	
 }

@@ -83,43 +83,53 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 		// Menus
 		JMenu mnuGame = new JMenu("Game");
 		JMenu mnuOptions = new JMenu("Options");
+		JMenu submnuNewGame = new JMenu("New game");  //sub menu
 		menu_bar.add(mnuGame);
 		menu_bar.add(mnuOptions);
 		
 		// Menu Items
 		JMenuItem restart = new JMenuItem("Restart");
-		JMenuItem new_game = new JMenuItem("New game");
 		JMenuItem remove_all_flags = new JMenuItem("Remove all flags");
 		JMenuItem scoreboard = new JMenuItem("Scoreboard");
 		JMenuItem quit = new JMenuItem("Quit");
+		JMenuItem easy = new JMenuItem("Easy");
+		JMenuItem normal = new JMenuItem("Normal");
+		JMenuItem hard = new JMenuItem("Hard");
 		sounds = new JCheckBoxMenuItem("Sounds Effect"); 
 		music = new JCheckBoxMenuItem("Music");
 		mnuGame.add(restart);
-		mnuGame.add(new_game);
+		mnuGame.add(submnuNewGame);
 		mnuGame.add(remove_all_flags);
 		mnuGame.add(scoreboard);
 		mnuOptions.add(music);
 		mnuOptions.add(sounds);
 		mnuOptions.add(quit);
+		submnuNewGame.add(easy);
+		submnuNewGame.add(normal);
+		submnuNewGame.add(hard);
 		
 		sounds.setSelected(true);
 		music.setSelected(true);
 		
 		// Action Command
 		restart.setActionCommand("Restart");
-		new_game.setActionCommand("New Game");
 		remove_all_flags.setActionCommand("Remove All Flags");
 		scoreboard.setActionCommand("Scoreboard");
 		quit.setActionCommand("Quit");
+		easy.setActionCommand("Easy");
+		normal.setActionCommand("Normal");
+		hard.setActionCommand("Hard");
 		sounds.setActionCommand("Sounds Effect");
 		music.setActionCommand("Music");
 		
 		// Action Listener
 		restart.addActionListener(this);
-		new_game.addActionListener(this);
 		remove_all_flags.addActionListener(this);
 		scoreboard.addActionListener(this);
 		quit.addActionListener(this);
+		easy.addActionListener(this);
+		normal.addActionListener(this);
+		hard.addActionListener(this);
 		sounds.addActionListener(this);
 		music.addActionListener(this);
 		
@@ -288,7 +298,9 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 		String command = e.getActionCommand();
 		
 		if(command.equals("Restart")) world.reset();
-		else if (command.equals("New Game")); //TODO: add
+		else if (command.equals("Easy")); //TODO: add
+		else if (command.equals("Normal")); //TODO: add
+		else if (command.equals("Hard")); //TODO: add
 		else if (command.equals("Remove All Flags")) world.removeAllFlags();
 		else if (command.equals("Scoreboard")); //TODO: add
 		else if (command.equals("Quit")) System.exit(EXIT_ON_CLOSE);
