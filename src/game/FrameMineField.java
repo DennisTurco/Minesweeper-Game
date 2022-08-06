@@ -26,6 +26,9 @@ import java.awt.event.WindowListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.awt.*;
+import javax.swing.*;
+
 
 @SuppressWarnings("serial")
 class FrameMineField extends JFrame implements MouseListener, WindowListener, ActionListener{
@@ -33,7 +36,7 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 	public static int width = 600; 
 	public static int height = 600;
 	
-	private Screen screen;
+	private static Screen screen;
 	private WorldMineField world;
 	private Font font;
 	
@@ -43,13 +46,14 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 	private static JLabel flags_number;
 	private static JLabel tiles_number;
 	private static JLabel score_number;
+	private static JCheckBoxMenuItem sounds;
+	private static JCheckBoxMenuItem music;
 	
 	private int insetLeft;
 	private int insetTop;
 	
 	// CONSTRUCTOR	
 	public FrameMineField () { 
-		
 		
 		addMouseListener(this);
 		
@@ -88,8 +92,8 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 		JMenuItem remove_all_flags = new JMenuItem("Remove all flags");
 		JMenuItem scoreboard = new JMenuItem("Scoreboard");
 		JMenuItem quit = new JMenuItem("Quit");
-		JCheckBoxMenuItem sounds = new JCheckBoxMenuItem("Sounds Effect"); 
-		JCheckBoxMenuItem music = new JCheckBoxMenuItem("Music");
+		sounds = new JCheckBoxMenuItem("Sounds Effect"); 
+		music = new JCheckBoxMenuItem("Music");
 		mnuGame.add(restart);
 		mnuGame.add(new_game);
 		mnuGame.add(remove_all_flags);
@@ -144,9 +148,6 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 
 	}
 	
-	
-	
-	
 	public class Screen extends JPanel {
 		@Override
 		public void paintComponent(Graphics g) {
@@ -154,6 +155,18 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 			g.setFont(font);
 			world.draw(g);
 		}
+	}
+	
+	public static void setLabelPanel() {
+	    JPanel panel = new JPanel();
+	    panel.setOpaque(true);
+	    panel.setBackground(Color.BLUE);
+	    JLabel helloLabel = new JLabel("Hello World!", JLabel.CENTER);
+	    helloLabel.setForeground(Color.WHITE);
+	    panel.add(helloLabel);
+
+	    screen.add(panel, BorderLayout.CENTER);
+	    screen.repaint();
 	}
 	
 	
@@ -179,6 +192,14 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 	
 	public static int getScreenHeight(){
 		return width;
+	}
+	
+	public static boolean isSoundEffectActive() {
+		return sounds.isSelected();
+	}
+	
+	public static boolean isMusicActive() {
+		return music.isSelected();
 	}
 	
 	// SETTER

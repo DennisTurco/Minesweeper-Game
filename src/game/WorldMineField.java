@@ -41,7 +41,6 @@ class WorldMineField {
 
 	//TODO: aggiungere la texture di un fiore da inserire quando si vince
 	//TODO: aggiungere i suoni e migliorarli
-	//TODO: aggiungere il punteggio
 	//TODO: aggiungere il tempo trascorso
 	//TODO: aggiungere la possibilità di cambiare difficoltà
 	//TODO: aggiungere delay tra le immagini
@@ -171,6 +170,14 @@ class WorldMineField {
 			
 			checkFinish();
 			score();
+			
+			if (dead == false && finish == true) {
+				System.out.println("Score = " + SCORE);
+				JFrame frame = new JFrame();
+			    Object result = JOptionPane.showInputDialog(frame, "Enter your name:");
+			    System.out.println(result); 
+			   
+			}
 		}
 	}
 	
@@ -195,6 +202,8 @@ class WorldMineField {
 	}
 	
 	public void openSound(String path) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+		if (FrameMineField.isSoundEffectActive() == false) return; // caso di uscita
+		
 		File file = new File(path);
 		AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
 		Clip clip = AudioSystem.getClip();
@@ -217,13 +226,6 @@ class WorldMineField {
 				}
 			}
 		}
-		
-		// se siamo arrivati qui significa che il giocatore ha vinto
-		JFrame frame = new JFrame();
-	    Object result = JOptionPane.showInputDialog(frame, "Enter your name:");
-	    System.out.println(result);
-	    
-	    System.out.println("Score = " + SCORE);
 		
 	}
 	
@@ -263,10 +265,12 @@ class WorldMineField {
 		if(dead){
 			g.setColor(Color.RED);
 			FrameMineField.drawCenteredString(g, "Game Over!", rect, font);
+			//FrameMineField.setLabelPanel(); 
 		}
 		else if(finish){
 			g.setColor(Color.GREEN);
 			FrameMineField.drawCenteredString(g, "You Won!!", rect, font);
+			//FrameMineField.setLabelPanel(); 
 		}
 	}
 	
