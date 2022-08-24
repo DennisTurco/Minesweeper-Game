@@ -1,5 +1,6 @@
 package game;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.sound.sampled.AudioInputStream;
@@ -11,7 +12,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.Graphics;
 import java.awt.Color;
@@ -19,9 +25,9 @@ import java.awt.Font;
 import java.awt.Rectangle;
 
 class WorldMineField {
-	private static int COLS = 15;
-	private static int ROWS = 15;
-	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
+	private static int COLS = 5;
+	private static int ROWS = 5;
+	private static int N_BOMBS = 1;//COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
 	private static int N_FLAGS = N_BOMBS;
 	private static int SCORE = 0;
 	private static int TIMER = 0;
@@ -152,7 +158,12 @@ class WorldMineField {
 			if (dead == false && finish == true) {
 				System.out.println("Score = " + SCORE);
 				JFrame frame = new JFrame();
-			    Object result = JOptionPane.showInputDialog(frame, "Enter your name:");
+			    String result = JOptionPane.showInputDialog(frame, "Enter your name:"); //messaggio popup
+			    try {
+					newScoreScoreboard(result); // passo il nome del vincitore nella scoreboard
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
 			    System.out.println(result); 
 			   
 			}
@@ -243,15 +254,78 @@ class WorldMineField {
 		if(dead){
 			g.setColor(Color.RED);
 			FrameMineField.drawCenteredString(g, "Game Over!", rect, font);
-			//FrameMineField.setLabelPanel(); 
 		}
 		else if(finish){
 			g.setColor(Color.GREEN);
 			FrameMineField.drawCenteredString(g, "You Won!!", rect, font);
-			//FrameMineField.setLabelPanel(); 
 		}
 	}
 	
+	// ######################## Scoreboard ########################
+	public void OpenScoreboard() throws Exception {
+		Runtime runtime = Runtime.getRuntime();
+		runtime.exec("notepad.exe .//res//scoreboard");
+	}
+	
+	private void newScoreScoreboard(String name) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(".//res//scoreboard", true)); //true = append
+        bw.write("" + name + " -->  Score: " + SCORE + "\n");
+        bw.close();
+        
+        SortScoreboard(); //ordino la scoreboard
+	}
+	
+	private void SortScoreboard() {
+		//leggo le righe
+		String []list = new String[10]; //la classifica è una top 10
+		
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(".//res//scoreboard"));
+			
+			for (int i=0; i<10; i++) {
+				if ((list[i] = br.readLine()) != null);
+			}
+			
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//ordino
+		Integer value1 = 0, value2 = 0;
+		for (int i=0; i<10; i++) {
+			if (list[i] != null) {
+				for (int c=0; c<list[i].length(); c++) {
+					if (list[i].charAt(c) == ':') {
+						value1 = Integer.parseInt(list[i].substring(c+2, list[i].length()));
+						break;
+					}
+				}
+			}
+			
+			for (int j=1; j<10; j++) {
+				if (list[j] != null) {
+					for (int c=0; c<list[j].length(); c++) {
+						if (list[j].charAt(c) == ':') {
+							value2 = Integer.parseInt(list[j].substring(c+2, list[j].length()));
+							break;
+						}
+					}
+					
+					if (value1 >= value2) {
+						String temp = list[i];
+						list[i] = list[j];
+						list[j] = temp;
+					}
+				}
+				
+			}
+		}
+		
+		
+	}
+	// ########################
 	
 	
 	//TODO: open()

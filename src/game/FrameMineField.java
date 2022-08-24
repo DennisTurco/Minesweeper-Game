@@ -167,18 +167,6 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 		}
 	}
 	
-	public static void setLabelPanel() {
-	    JPanel panel = new JPanel();
-	    panel.setOpaque(true);
-	    panel.setBackground(Color.BLUE);
-	    JLabel helloLabel = new JLabel("Hello World!", JLabel.CENTER);
-	    helloLabel.setForeground(Color.WHITE);
-	    panel.add(helloLabel);
-
-	    screen.add(panel, BorderLayout.CENTER);
-	    screen.repaint();
-	}
-	
 	
 	// https://stackoverflow.com/questions/27706197/how-can-i-center-graphics-drawstring-in-java
 	public static void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
@@ -302,10 +290,15 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 		else if (command.equals("Normal")); //TODO: add
 		else if (command.equals("Hard")); //TODO: add
 		else if (command.equals("Remove All Flags")) world.removeAllFlags();
-		else if (command.equals("Scoreboard")); //TODO: add
 		else if (command.equals("Quit")) System.exit(EXIT_ON_CLOSE);
 		else if (command.equals("Sounds Effect")); //TODO: add
 		else if (command.equals("Music")); //TODO: add
+		else if (command.equals("Scoreboard"))
+			try {
+				world.OpenScoreboard();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		else return;
 		
 		screen.repaint();
