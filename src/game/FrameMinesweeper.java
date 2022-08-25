@@ -31,13 +31,13 @@ import javax.swing.*;
 
 
 @SuppressWarnings("serial")
-class FrameMineField extends JFrame implements MouseListener, WindowListener, ActionListener{
+class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, ActionListener{
 	
 	public static int width = 600; 
 	public static int height = 600;
 	
 	private static Screen screen;
-	private WorldMineField world;
+	private WorldMinesweeper world;
 	private Font font;
 	
 	private JMenuBar menu_bar;
@@ -53,7 +53,7 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 	private int insetTop;
 	
 	// CONSTRUCTOR	
-	public FrameMineField () { 
+	public FrameMinesweeper () { 
 		
 		addMouseListener(this);
 		
@@ -140,9 +140,9 @@ class FrameMineField extends JFrame implements MouseListener, WindowListener, Ac
 		
 		
 		
-		world = new WorldMineField();
+		world = new WorldMinesweeper();
 		
-		this.setTitle("MineField");
+		this.setTitle("Minesweeper");
 		this.setResizable(false);
 		this.setLocation(650, 200); // per far aprire la finestra a centro schermo
 		this.setVisible(true);

@@ -24,26 +24,26 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
 
-class WorldMineField {
-	private static int COLS = 5;
-	private static int ROWS = 5;
-	private static int N_BOMBS = 1;//COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
+class WorldMinesweeper {
+	private static int COLS = 15;
+	private static int ROWS = 15;
+	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
 	private static int N_FLAGS = N_BOMBS;
 	private static int SCORE = 0;
 	private static int TIMER = 0;
 	private static boolean dead;
 	private static boolean finish;
-	private static TileMineField[][] matrix;
+	private static TileMinesweeper[][] matrix;
 	
 	// scalo le immagini in base alla dimensione dello schermo
 	
-	private BufferedImage bomb_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/bomb_face.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage bomb_no_face_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/bomb.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage flag_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/flag.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage pressed_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_brown_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage pressed2_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_brown2_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage normal_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_green_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
-	private BufferedImage normal2_img = ImageLoader_MineField.scale(ImageLoader_MineField.loadImage("res/tile_green2_normal.png"), TileMineField.getWidth(), TileMineField.getHeight());
+	private BufferedImage bomb_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb_face.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+	private BufferedImage bomb_no_face_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+	private BufferedImage flag_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/flag.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+	private BufferedImage pressed_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_brown_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+	private BufferedImage pressed2_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_brown2_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+	private BufferedImage normal_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_green_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+	private BufferedImage normal2_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_green2_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
 
 	//TODO: aggiungere la texture di un fiore da inserire quando si vince
 	//TODO: aggiungere i suoni e migliorarli
@@ -53,24 +53,24 @@ class WorldMineField {
 	//TODO: aggiungere hover sulle caselle selezionate
 	
 	//CONSTRUCTOR
-	public WorldMineField() {
+	public WorldMinesweeper() {
 		
 		
 		System.out.println("COLS*ROWS = " + COLS*ROWS);
 		System.out.println("N_BOMBS = " + N_BOMBS);
 		
-		matrix = new TileMineField[ROWS][COLS];
+		matrix = new TileMinesweeper[ROWS][COLS];
 		
 		// costruisco ogni cella
 		boolean tile_switch = false;
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
 				if (tile_switch == false) {
-					matrix[i][j] = new TileMineField(i, j, normal_img, bomb_no_face_img, bomb_img, pressed_img, flag_img);
+					matrix[i][j] = new TileMinesweeper(i, j, normal_img, bomb_no_face_img, bomb_img, pressed_img, flag_img);
 					tile_switch = true;
 				}
 				else {
-					matrix[i][j] = new TileMineField(i, j, normal2_img, bomb_no_face_img, bomb_img, pressed2_img, flag_img);
+					matrix[i][j] = new TileMinesweeper(i, j, normal2_img, bomb_no_face_img, bomb_img, pressed2_img, flag_img);
 					tile_switch = false;
 				}
 				
@@ -110,15 +110,15 @@ class WorldMineField {
 		}
 		
 		N_FLAGS = N_BOMBS-count;
-		FrameMineField.setFlagsNumber(N_FLAGS);
+		FrameMinesweeper.setFlagsNumber(N_FLAGS);
 	}
 
 	
 	public void left_click(int x, int y) {
 		if (dead == false && finish == false) {
 			
-			int x_axis = x/TileMineField.getWidth();
-			int y_axis = y/TileMineField.getHeight();
+			int x_axis = x/TileMinesweeper.getWidth();
+			int y_axis = y/TileMinesweeper.getHeight();
 			
 			if (matrix[x_axis][y_axis].isOpened() == true) return;
 			else if (matrix[x_axis][y_axis].isBomb()) {
@@ -172,8 +172,8 @@ class WorldMineField {
 	
 	public void right_click(int x, int y) {
 		if(dead == false && finish == false){
-			int x_axis = x/TileMineField.getWidth(); // ottengo la corretta posizione in base allo schermo
-			int y_axis = y/TileMineField.getHeight();
+			int x_axis = x/TileMinesweeper.getWidth(); // ottengo la corretta posizione in base allo schermo
+			int y_axis = y/TileMinesweeper.getHeight();
 			matrix[x_axis][y_axis].placeFlag(); //piazzo una flag nella posizione corretta
 			
 			showNumberOfFlag(); // ricalcola il numero di flag
@@ -191,7 +191,7 @@ class WorldMineField {
 	}
 	
 	public void openSound(String path) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		if (FrameMineField.isSoundEffectActive() == false) return; // caso di uscita
+		if (FrameMinesweeper.isSoundEffectActive() == false) return; // caso di uscita
 		
 		File file = new File(path);
 		AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
@@ -235,16 +235,16 @@ class WorldMineField {
 		set_numeber_of_near_bombs();
 		
 		// resetto i valori nella ToolBar
-		FrameMineField.setFlagsNumber(N_BOMBS);
-		FrameMineField.setTilesNumber(COLS*ROWS);
-		FrameMineField.setScore(0);
+		FrameMinesweeper.setFlagsNumber(N_BOMBS);
+		FrameMinesweeper.setTilesNumber(COLS*ROWS);
+		FrameMinesweeper.setScore(0);
 			
 	}
 	
 	
 	public void draw(Graphics g){
-		Font font = new Font("SansSerif", 0, FrameMineField.getScreenWidth()*10/100); // la scritta sarà con una grandezza del 10% della finestra di gioco
-		Rectangle rect = new Rectangle(FrameMineField.width, FrameMineField.height);
+		Font font = new Font("SansSerif", 0, FrameMinesweeper.getScreenWidth()*10/100); // la scritta sarà con una grandezza del 10% della finestra di gioco
+		Rectangle rect = new Rectangle(FrameMinesweeper.width, FrameMinesweeper.height);
 		for(int x = 0;x < COLS;x++){
 			for(int y = 0;y < ROWS;y++){
 				matrix[x][y].draw(g);
@@ -253,11 +253,11 @@ class WorldMineField {
 		
 		if(dead){
 			g.setColor(Color.RED);
-			FrameMineField.drawCenteredString(g, "Game Over!", rect, font);
+			FrameMinesweeper.drawCenteredString(g, "Game Over!", rect, font);
 		}
 		else if(finish){
 			g.setColor(Color.GREEN);
-			FrameMineField.drawCenteredString(g, "You Won!!", rect, font);
+			FrameMinesweeper.drawCenteredString(g, "You Won!!", rect, font);
 		}
 	}
 	
@@ -304,7 +304,7 @@ class WorldMineField {
 				}
 			}
 			
-			for (int j=1; j<10; j++) {
+			for (int j=i+1; j<10; j++) {
 				if (list[j] != null) {
 					for (int c=0; c<list[j].length(); c++) {
 						if (list[j].charAt(c) == ':') {
@@ -313,7 +313,8 @@ class WorldMineField {
 						}
 					}
 					
-					if (value1 >= value2) {
+					System.out.println("" + value1 + " <= " + value2);
+					if (value1 <= value2) {
 						String temp = list[i];
 						list[i] = list[j];
 						list[j] = temp;
@@ -322,6 +323,19 @@ class WorldMineField {
 				
 			}
 		}
+		
+		// scrivo i nuovi valori ordinati
+		BufferedWriter bw;
+		try {
+			bw = new BufferedWriter(new FileWriter(".//res//scoreboard", false)); //false = append
+			for (int i=0; i<list.length; i++) {
+	        	if (list[i] != null) bw.write("" + list[i] + "\n");
+	        }
+	        bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+        
 		
 		
 	}
@@ -379,7 +393,7 @@ class WorldMineField {
 		if (dead == false && finish == true) score += N_BOMBS; // caso in cui il giocatore ha vinto
 		
 		SCORE = score;
-		FrameMineField.setScore(SCORE);
+		FrameMinesweeper.setScore(SCORE);
 	}
 	
 	

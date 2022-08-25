@@ -13,11 +13,11 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 
-class MenuMineField extends JFrame implements WindowListener, ActionListener {
+class MenuMinesweeper extends JFrame implements WindowListener, ActionListener {
 	
 	private Label lblDisplay;
 	
-	public MenuMineField () {
+	public MenuMinesweeper () {
 		
 		addWindowListener(this);
 		

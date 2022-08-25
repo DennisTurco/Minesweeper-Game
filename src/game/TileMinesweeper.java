@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-public class TileMineField {
+public class TileMinesweeper {
 	private BufferedImage normal;
 	private BufferedImage openedImage;
 	private BufferedImage flagImage;
@@ -30,10 +30,10 @@ public class TileMineField {
 	Color color7 = new Color (0, 80, 107);		// ...
 	Color color8 = new Color (0, 0, 0);			// nero
 	
-	private static int width = FrameMineField.getScreenWidth()/WorldMineField.getROWS(); 
-	private static int height = FrameMineField.getScreenHeight()/WorldMineField.getCOLS(); 
+	private static int width = FrameMinesweeper.getScreenWidth()/WorldMinesweeper.getROWS(); 
+	private static int height = FrameMinesweeper.getScreenHeight()/WorldMinesweeper.getCOLS(); 
 	
-	public TileMineField(int x, int y, BufferedImage normal, BufferedImage bomb, BufferedImage bomb_face, BufferedImage openedImage, BufferedImage flag) {
+	public TileMinesweeper(int x, int y, BufferedImage normal, BufferedImage bomb, BufferedImage bomb_face, BufferedImage openedImage, BufferedImage flag) {
 		this.x = x;
 		this.y = y;
 		this.normal = normal;
@@ -86,7 +86,7 @@ public class TileMineField {
 	public void placeFlag() {
 		if(flag) flag = false;
 		else{
-			if(!opened && WorldMineField.getN_FLAGS() > 0) flag = true; // metto la bandiera solo se la casella non è già aperta e non ho raggiunto il numero massimo di bandiere inseribili
+			if(!opened && WorldMinesweeper.getN_FLAGS() > 0) flag = true; // metto la bandiera solo se la casella non è già aperta e non ho raggiunto il numero massimo di bandiere inseribili
 		}
 	}
 	
