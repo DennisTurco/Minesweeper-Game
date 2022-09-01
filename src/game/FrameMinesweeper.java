@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
+import game.FrameMinesweeper.Screen;
+
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
@@ -46,6 +48,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	private static JLabel flags_number;
 	private static JLabel tiles_number;
 	private static JLabel score_number;
+	private static JLabel time_number;
 	private static JCheckBoxMenuItem sounds;
 	private static JCheckBoxMenuItem music;
 	
@@ -68,9 +71,11 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		tiles_number = new JLabel("Tiles = ");
 		flags_number = new JLabel("Flags = ");
 		score_number = new JLabel("Score = ");
+		time_number = new JLabel("Time = ");
 		tool_bar.add(tiles_number);
 		tool_bar.add(flags_number);
 		tool_bar.add(score_number);
+		tool_bar.add(time_number);
 		
 		
 		//TODO: farla funzionare nella classe a parte richiamandola
@@ -138,8 +143,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		remove_all_flags.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK)); // ctrl+f
 		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK)); // alt+f4
 		
-		
-		
 		world = new WorldMinesweeper();
 		
 		this.setTitle("Minesweeper");
@@ -151,10 +154,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		setIconImage(image.getImage());	//cambia l'icona del frame
 		
 		// Setting Borders
-		pack();
-		insetLeft = getInsets().left;
-		insetTop = getInsets().top;
-		setSize(width + insetLeft + getInsets().right, height + getInsets().bottom + insetTop + menu_bar.getHeight() + tool_bar.getHeight());
+		setBorders();
 
 	}
 	
@@ -165,6 +165,13 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 			g.setFont(font);
 			world.draw(g);
 		}
+	}
+	
+	private void setBorders() {
+		pack();
+		insetLeft = getInsets().left;
+		insetTop = getInsets().top;
+		setSize(width + insetLeft + getInsets().right, height + getInsets().bottom + insetTop + menu_bar.getHeight() + tool_bar.getHeight());
 	}
 	
 	
@@ -212,6 +219,10 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	public static void setScore(int value) {
 		score_number.setText("       Score = " + value);
 	} 
+	
+	public static void setTimer(float value) {
+		time_number.setText("       Time = " + value);
+	}
 	
 	// MOUSE
 	@Override
@@ -286,9 +297,14 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		String command = e.getActionCommand();
 		
 		if(command.equals("Restart")) world.reset();
-		else if (command.equals("Easy")); //TODO: add
-		else if (command.equals("Normal")); //TODO: add
-		else if (command.equals("Hard")); //TODO: add
+		
+		/*else if (command.equals("Easy")) { 
+			world = new WorldMinesweeper(7, 7); 
+			world.draw(getGraphics());
+		}	//TODO: add
+		
+		else if (command.equals("Normal")) world = new WorldMinesweeper(15, 15); //TODO: add
+		else if (command.equals("Hard")) world = new WorldMinesweeper(25, 25); //TODO: add*/
 		else if (command.equals("Remove All Flags")) world.removeAllFlags();
 		else if (command.equals("Quit")) System.exit(EXIT_ON_CLOSE);
 		else if (command.equals("Sounds Effect")); //TODO: add
