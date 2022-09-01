@@ -47,10 +47,8 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	
 	private static JLabel flags_number;
 	private static JLabel tiles_number;
-	private static JLabel score_number;
 	private static JLabel time_number;
 	private static JCheckBoxMenuItem sounds;
-	private static JCheckBoxMenuItem music;
 	
 	private int insetLeft;
 	private int insetTop;
@@ -70,11 +68,9 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		
 		tiles_number = new JLabel("Tiles = ");
 		flags_number = new JLabel("Flags = ");
-		score_number = new JLabel("Score = ");
 		time_number = new JLabel("Time = ");
 		tool_bar.add(tiles_number);
 		tool_bar.add(flags_number);
-		tool_bar.add(score_number);
 		tool_bar.add(time_number);
 		
 		
@@ -96,47 +92,46 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		JMenuItem restart = new JMenuItem("Restart");
 		JMenuItem remove_all_flags = new JMenuItem("Remove all flags");
 		JMenuItem scoreboard = new JMenuItem("Scoreboard");
+		JMenuItem rules = new JMenuItem("How To Play");
 		JMenuItem quit = new JMenuItem("Quit");
 		JMenuItem easy = new JMenuItem("Easy");
 		JMenuItem normal = new JMenuItem("Normal");
 		JMenuItem hard = new JMenuItem("Hard");
 		sounds = new JCheckBoxMenuItem("Sounds Effect"); 
-		music = new JCheckBoxMenuItem("Music");
 		mnuGame.add(restart);
 		mnuGame.add(submnuNewGame);
 		mnuGame.add(remove_all_flags);
 		mnuGame.add(scoreboard);
-		mnuOptions.add(music);
 		mnuOptions.add(sounds);
+		mnuOptions.add(rules);
 		mnuOptions.add(quit);
 		submnuNewGame.add(easy);
 		submnuNewGame.add(normal);
 		submnuNewGame.add(hard);
 		
 		sounds.setSelected(true);
-		music.setSelected(true);
 		
 		// Action Command
 		restart.setActionCommand("Restart");
 		remove_all_flags.setActionCommand("Remove All Flags");
 		scoreboard.setActionCommand("Scoreboard");
+		rules.setActionCommand("Rules");
 		quit.setActionCommand("Quit");
 		easy.setActionCommand("Easy");
 		normal.setActionCommand("Normal");
 		hard.setActionCommand("Hard");
 		sounds.setActionCommand("Sounds Effect");
-		music.setActionCommand("Music");
 		
 		// Action Listener
 		restart.addActionListener(this);
 		remove_all_flags.addActionListener(this);
 		scoreboard.addActionListener(this);
+		rules.addActionListener(this);
 		quit.addActionListener(this);
 		easy.addActionListener(this);
 		normal.addActionListener(this);
 		hard.addActionListener(this);
 		sounds.addActionListener(this);
-		music.addActionListener(this);
 		
 		// Acceleration
 		restart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK)); // ctrl+r
@@ -203,9 +198,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		return sounds.isSelected();
 	}
 	
-	public static boolean isMusicActive() {
-		return music.isSelected();
-	}
 	
 	// SETTER
 	public static void setFlagsNumber(int value) {
@@ -214,10 +206,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	
 	public static void setTilesNumber(int value) {
 		tiles_number.setText("Tiles = " + value);
-	}
-	
-	public static void setScore(int value) {
-		score_number.setText("       Score = " + value);
 	} 
 	
 	public static void setTimer(float value) {
@@ -297,7 +285,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		String command = e.getActionCommand();
 		
 		if(command.equals("Restart")) world.reset();
-		
 		/*else if (command.equals("Easy")) { 
 			world = new WorldMinesweeper(7, 7); 
 			world.draw(getGraphics());
@@ -306,9 +293,16 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		else if (command.equals("Normal")) world = new WorldMinesweeper(15, 15); //TODO: add
 		else if (command.equals("Hard")) world = new WorldMinesweeper(25, 25); //TODO: add*/
 		else if (command.equals("Remove All Flags")) world.removeAllFlags();
+		
 		else if (command.equals("Quit")) System.exit(EXIT_ON_CLOSE);
 		else if (command.equals("Sounds Effect")); //TODO: add
-		else if (command.equals("Music")); //TODO: add
+		else if (command.equals("Rules")) {
+			try {
+				world.OpenRules();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
 		else if (command.equals("Scoreboard"))
 			try {
 				world.OpenScoreboard();

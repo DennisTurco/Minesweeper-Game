@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 class TimerMinesweeper {
 	
-	private static int TIMER = 0;
+	private static float TIMER = 0f;
 	private static boolean timer_running;
 	private static Timer timer;
 	private static TimerTask task;
@@ -14,29 +14,32 @@ class TimerMinesweeper {
 		timer = new Timer();
 		task = new TimerTask() {
 			public void run() {
-				TIMER++;
+				TIMER += 0.001; //incremento di un millisecondo
 				if (TIMER < 99999) FrameMinesweeper.setTimer(TIMER);
 			}
 		};
+		
+		timer_running = false;
 	}
 	
-	public static void startTimer() {
-		timer.scheduleAtFixedRate(task, 1000, 1000);
+	public void startTimer() {
+		timer.scheduleAtFixedRate(task, 1000, 1);
 		timer_running = true;
 	}
-	public static void stopTimer() {
+	
+	public void stopTimer() {
 		timer.cancel();
 		timer_running = false;
 	}
 	
 	// getter & setter
-	public static int getTimer() {
+	public float getTimer() {
 		return TIMER;
 	}
-	public static void setTimer(int value) {
+	public void setTimer(int value) {
 		TIMER = value;
 	}
-	public static boolean isTimeRunning() {
+	public boolean isTimeRunning() {
 		return timer_running;
 	}
 	

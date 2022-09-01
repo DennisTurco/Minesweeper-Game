@@ -1,24 +1,18 @@
 package game;
 
-import java.util.ArrayList;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,10 +26,10 @@ class WorldMinesweeper {
 	private static int ROWS = 15;
 	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
 	private static int N_FLAGS = N_BOMBS;
-	private static int SCORE = 0;
 	private static boolean dead;
 	private static boolean finish;
 	private static TileMinesweeper[][] matrix;
+	private static TimerMinesweeper timer = new TimerMinesweeper();
 	
 	// scalo le immagini in base alla dimensione dello schermo
 	private BufferedImage bomb_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb_face.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
@@ -113,8 +107,8 @@ class WorldMinesweeper {
 	public void left_click(int x, int y) {
 		if (dead == false && finish == false) {
 			
-			if (TimerMinesweeper.isTimeRunning() == false) { //avvio il timer
-				//TimerMinesweeper.startTimer();  
+			if (timer.isTimeRunning() == false) { //avvio il timer
+				timer.startTimer();  
 			}
 			
 			int x_axis = x/TileMinesweeper.getWidth();
@@ -153,10 +147,9 @@ class WorldMinesweeper {
 			
 			
 			checkFinish();
-			if (dead == false) score();
 			
 			if (dead == false && finish == true) {
-			    String result = JOptionPane.showInputDialog(null, "Enter your name:", "Congratulations!! Score = " + SCORE, JOptionPane.INFORMATION_MESSAGE); //messaggio popup
+			    String result = JOptionPane.showInputDialog(null, "Enter your name:", "Congratulations!! Seconds Passed = " + timer.getTimer(), JOptionPane.INFORMATION_MESSAGE); //messaggio popup
 			    try {
 			    	System.out.println(result.length());
 					if (result.length() > 0) newScoreScoreboard(result); // passo il nome del vincitore nella scoreboard
@@ -167,8 +160,9 @@ class WorldMinesweeper {
 			}
 		}
 		
-		if ((finish == true || dead == true) && TimerMinesweeper.isTimeRunning() == true ) {
-			TimerMinesweeper.stopTimer();
+		if ((finish == true || dead == true) && timer.isTimeRunning() == true ) {
+			timer.stopTimer(); // elimino il timer
+			timer = new TimerMinesweeper(); //creo un nuovo oggetto Timer 
 		}
 
 	}
@@ -176,8 +170,8 @@ class WorldMinesweeper {
 	public void right_click(int x, int y) {
 		if(dead == false && finish == false){
 			
-			if (TimerMinesweeper.isTimeRunning() == false) { //avvio il timer
-				//TimerMinesweeper.startTimer();
+			if (timer.isTimeRunning() == false) { //avvio il timer
+				timer.startTimer();
 			}
 			
 			int x_axis = x/TileMinesweeper.getWidth(); // ottengo la corretta posizione in base allo schermo
@@ -245,13 +239,13 @@ class WorldMinesweeper {
 		// resetto i valori nella ToolBar
 		FrameMinesweeper.setFlagsNumber(N_BOMBS);
 		FrameMinesweeper.setTilesNumber(COLS*ROWS);
-		FrameMinesweeper.setScore(0);
 		FrameMinesweeper.setTimer(0);	
 		
 		// restart timer
-		TimerMinesweeper.setTimer(0);
-		if (TimerMinesweeper.isTimeRunning() == true) {
-			TimerMinesweeper.stopTimer();
+		timer.setTimer(0);
+		if (timer.isTimeRunning() == true) {
+			timer.stopTimer(); // elimino il timer
+			timer = new TimerMinesweeper(); //creo un nuovo oggetto Timer 
 		} 
 	}
 	
@@ -275,6 +269,11 @@ class WorldMinesweeper {
 		}
 	}
 	
+	public void OpenRules () throws Exception {
+		Runtime runtime = Runtime.getRuntime();
+		runtime.exec("notepad.exe .//res//rules");
+	}
+	
 	// ######################## Scoreboard ########################
 	public void OpenScoreboard() throws Exception {
 		Runtime runtime = Runtime.getRuntime();
@@ -283,7 +282,7 @@ class WorldMinesweeper {
 	
 	private void newScoreScoreboard(String name) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(".//res//scoreboard", true)); //true = append
-        bw.write("" + name + " -->  Score: " + SCORE + "\n");
+        bw.write("" + name + " -->  Seconds: " + timer.getTimer() + "\n");
         bw.close();
         
         SortScoreboard(); //ordino la scoreboard
@@ -292,7 +291,6 @@ class WorldMinesweeper {
 	private void SortScoreboard() {
 		//leggo le righe
 		int DIM_MAX = 11;
-		String line;
 		String []list = new String[DIM_MAX]; //la classifica è una top 10
 		
 		try {
@@ -394,27 +392,6 @@ class WorldMinesweeper {
 				if (matrix[i][j].isFlag()) matrix[i][j].placeFlag();
 			}
 		}
-	}
-	
-	public void score() {
-		int score = SCORE;
-		for (int i=0; i<ROWS; i++) {
-			for (int j=0; j<COLS; j++) {
-				if (matrix[i][j].isOpened() == true && matrix[i][j].isBomb() == false && matrix[i][j].isBombFace() == false) {
-					if (COLS*ROWS - TimerMinesweeper.getTimer() > 0) {
-						score += COLS*ROWS - TimerMinesweeper.getTimer();
-						SCORE = score-SCORE;
-					} 
-					else score++;
-				}
-					
-			}
-		}
-		
-		//if (dead == false && finish == true) score += N_BOMBS; // caso in cui il giocatore ha vinto
-		
-		SCORE = score;
-		FrameMinesweeper.setScore(SCORE);
 	}
 	
 	
