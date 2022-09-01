@@ -28,6 +28,7 @@ class WorldMinesweeper {
 	private static int N_FLAGS = N_BOMBS;
 	private static boolean dead;
 	private static boolean finish;
+	private static boolean started;
 	private static TileMinesweeper[][] matrix;
 	private static TimerMinesweeper timer = new TimerMinesweeper();
 	
@@ -104,7 +105,7 @@ class WorldMinesweeper {
 		FrameMinesweeper.setFlagsNumber(N_FLAGS);
 	}
 	
-	public void showWrongFlags() { //TODO:: FIXHERE
+	public void showWrongFlags() {
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
 				if (matrix[i][j].isFlag() && !(matrix[i][j].isBomb() || matrix[i][j].isBombFace())) {
@@ -119,17 +120,29 @@ class WorldMinesweeper {
 
 	
 	public void left_click(int x, int y) {
+		
+		
+		int x_axis = x/TileMinesweeper.getWidth();
+		int y_axis = y/TileMinesweeper.getHeight();
+		
+		// caso del primo click di inizio partita
+		if (started == false) {
+			while(!(matrix[x_axis][y_axis].getAmountOfNearBombs() == 0 && matrix[x_axis][y_axis].isBomb() == false)) {
+				reset();
+			}
+		}
+		
+		
 		if (dead == false && finish == false) {
+			
+			started = true;
 			
 			if (timer.isTimeRunning() == false) { //avvio il timer
 				timer.startTimer();  
 			}
 			
-			int x_axis = x/TileMinesweeper.getWidth();
-			int y_axis = y/TileMinesweeper.getHeight();
-			
 			if (matrix[x_axis][y_axis].isFlag()) return;
-			else if (matrix[x_axis][y_axis].isOpened() == true) return;
+			else if (matrix[x_axis][y_axis].isOpened()) return;
 			else if (matrix[x_axis][y_axis].isBomb()) {
 				dead = true;
 				
@@ -245,6 +258,7 @@ class WorldMinesweeper {
 		// azzero i booleani
 		dead = false;
 		finish = false;
+		started = false;
 		
 		// ripiazzo le bombe e i numeri affianco
 		place_all_bombs();
