@@ -39,7 +39,8 @@ class WorldMinesweeper {
 	private BufferedImage pressed2_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_brown2_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
 	private BufferedImage normal_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_green_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
 	private BufferedImage normal2_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_green2_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
-
+	private BufferedImage error_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/error.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+	
 	//TODO: aggiungere la texture di un fiore da inserire quando si vince
 	//TODO: aggiungere i suoni e migliorarli
 	//TODO: aggiungere la possibilità di cambiare difficoltà
@@ -56,11 +57,11 @@ class WorldMinesweeper {
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
 				if (tile_switch == false) {
-					matrix[i][j] = new TileMinesweeper(i, j, normal_img, bomb_no_face_img, bomb_img, pressed_img, flag_img);
+					matrix[i][j] = new TileMinesweeper(i, j, normal_img, bomb_no_face_img, bomb_img, pressed_img, flag_img, error_img);
 					tile_switch = true;
 				}
 				else {
-					matrix[i][j] = new TileMinesweeper(i, j, normal2_img, bomb_no_face_img, bomb_img, pressed2_img, flag_img);
+					matrix[i][j] = new TileMinesweeper(i, j, normal2_img, bomb_no_face_img, bomb_img, pressed2_img, flag_img, error_img);
 					tile_switch = false;
 				}
 				
@@ -102,6 +103,19 @@ class WorldMinesweeper {
 		N_FLAGS = N_BOMBS-count;
 		FrameMinesweeper.setFlagsNumber(N_FLAGS);
 	}
+	
+	public void showWrongFlags() { //TODO:: FIXHERE
+		for (int i=0; i<ROWS; i++) {
+			for (int j=0; j<COLS; j++) {
+				if (matrix[i][j].isFlag() && !(matrix[i][j].isBomb() || matrix[i][j].isBombFace())) {
+					matrix[i][j].setError(true);
+					
+				}
+			}
+			
+		}
+		
+	}
 
 	
 	public void left_click(int x, int y) {
@@ -114,12 +128,13 @@ class WorldMinesweeper {
 			int x_axis = x/TileMinesweeper.getWidth();
 			int y_axis = y/TileMinesweeper.getHeight();
 			
-			if (matrix[x_axis][y_axis].isOpened() == true) return;
+			if (matrix[x_axis][y_axis].isFlag()) return;
+			else if (matrix[x_axis][y_axis].isOpened() == true) return;
 			else if (matrix[x_axis][y_axis].isBomb()) {
 				dead = true;
 				
 				showAllBombs();
-				//TODO: ahhiungere anche removeWrongFlags
+				showWrongFlags();
 				
 				matrix[x_axis][y_axis].setBomb(false); // tolgo l'immagine di default della bomba
 				matrix[x_axis][y_axis].setBombFace(true); // aggiungo la bomba con la faccia nella posizione attuale
@@ -131,7 +146,6 @@ class WorldMinesweeper {
 					e.printStackTrace();
 				}
 			}
-			else if (matrix[x_axis][y_axis].isFlag()) return;
 			else if (matrix[x_axis][y_axis].getAmountOfNearBombs() == 0 && matrix[x_axis][y_axis].isBomb() == false) open(x_axis, y_axis);
 			
 			matrix[x_axis][y_axis].setOpened(true);
@@ -148,6 +162,11 @@ class WorldMinesweeper {
 			
 			checkFinish();
 			
+			if ((finish == true || dead == true) && timer.isTimeRunning() == true ) {
+				timer.stopTimer(); // elimino il timer
+				timer = new TimerMinesweeper(); //creo un nuovo oggetto Timer 
+			}
+			
 			if (dead == false && finish == true) {
 			    String result = JOptionPane.showInputDialog(null, "Enter your name:", "Congratulations!! Seconds Passed = " + timer.getTimer(), JOptionPane.INFORMATION_MESSAGE); //messaggio popup
 			    try {
@@ -158,11 +177,6 @@ class WorldMinesweeper {
 				} 
 			   
 			}
-		}
-		
-		if ((finish == true || dead == true) && timer.isTimeRunning() == true ) {
-			timer.stopTimer(); // elimino il timer
-			timer = new TimerMinesweeper(); //creo un nuovo oggetto Timer 
 		}
 
 	}
@@ -307,12 +321,12 @@ class WorldMinesweeper {
 		}
 		
 		//ordino
-		Integer value1 = 0, value2 = 0;
+		float value1 = 0, value2 = 0;
 		for (int i=0; i<DIM_MAX; i++) {
 			if (list[i] != null) {
 				for (int c=0; c<list[i].length(); c++) {
 					if (list[i].charAt(c) == ':') {
-						value1 = Integer.parseInt(list[i].substring(c+2, list[i].length()));
+						value1 = Float.parseFloat(list[i].substring(c+2, list[i].length()));
 						break;
 					}
 				}
@@ -322,12 +336,12 @@ class WorldMinesweeper {
 				if (list[j] != null) {
 					for (int c=0; c<list[j].length(); c++) {
 						if (list[j].charAt(c) == ':') {
-							value2 = Integer.parseInt(list[j].substring(c+2, list[j].length()));
+							value2 = Float.parseFloat(list[j].substring(c+2, list[j].length()));
 							break;
 						}
 					}
 					
-					if (value1 <= value2) {
+					if (value1 >= value2) {
 						String temp = list[i];
 						list[i] = list[j];
 						list[j] = temp;

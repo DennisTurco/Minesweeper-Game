@@ -10,6 +10,7 @@ public class TileMinesweeper {
 	private BufferedImage flagImage;
 	private BufferedImage bombImage;
 	private BufferedImage bombImage_face;
+	private BufferedImage errorImage;
 	
 	private int x;
 	private int y;
@@ -17,6 +18,7 @@ public class TileMinesweeper {
 	private boolean bomb_face;
 	private boolean opened;
 	private boolean flag;
+	private boolean error;
 	private int amountOfNearBombs;
 	
 	Color color1 = new Color (25, 118, 210);	// blu
@@ -31,7 +33,7 @@ public class TileMinesweeper {
 	private static int width = FrameMinesweeper.getScreenWidth()/WorldMinesweeper.getROWS(); 
 	private static int height = FrameMinesweeper.getScreenHeight()/WorldMinesweeper.getCOLS(); 
 	
-	public TileMinesweeper(int x, int y, BufferedImage normal, BufferedImage bomb, BufferedImage bomb_face, BufferedImage openedImage, BufferedImage flag) {
+	public TileMinesweeper(int x, int y, BufferedImage normal, BufferedImage bomb, BufferedImage bomb_face, BufferedImage openedImage, BufferedImage flag, BufferedImage error) {
 		this.x = x;
 		this.y = y;
 		this.normal = normal;
@@ -39,6 +41,7 @@ public class TileMinesweeper {
 		this.openedImage = openedImage;
 		this.flagImage = flag;
 		this.bombImage_face = bomb_face;
+		this.errorImage = error;
 	}
 	
 	public void setOpenedImage(BufferedImage openedImage) {
@@ -61,12 +64,20 @@ public class TileMinesweeper {
 		this.bomb_face = bomb;
 	}
 	
+	public void setError(boolean error) {
+		this.error = error;
+	}
+	
 	public boolean isBomb() {
 		return bomb;
 	}
 	
 	public boolean isBombFace() {
 		return bomb_face;
+	}
+	
+	public boolean isError() {
+		return error;
 	}
 	
 	public void setAmountOfNearBombs(int amountOfNearBombs) {
@@ -97,11 +108,13 @@ public class TileMinesweeper {
 		bomb = false;
 		opened = false;
 		bomb_face = false;
+		error = false;
 	}
 
 	public void draw(Graphics g) {
 		if(!opened) {
 			if(!flag) g.drawImage(normal, x * width, y * height, null);
+			else if(error) g.drawImage(errorImage, x * width, y * height, null);
 			else g.drawImage(flagImage, x * width, y * height, null);
 		} else {
 			if(bomb) g.drawImage(bombImage, x * width, y * height, null);

@@ -65,6 +65,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		// ToolBar
 		tool_bar = new JToolBar();
 		this.add(tool_bar, BorderLayout.PAGE_START);
+		tool_bar.setFloatable(false);
 		
 		tiles_number = new JLabel("Tiles = ");
 		flags_number = new JLabel("Flags = ");
@@ -182,6 +183,8 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	    g.setFont(font);
 	    // Draw the String
 	    g.drawString(text, x, y);
+	    
+	    screen.repaint();
 	}
 	
 	
@@ -195,6 +198,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	}
 	
 	public static boolean isSoundEffectActive() {
+		screen.repaint(); // evito bug grafici
 		return sounds.isSelected();
 	}
 	
@@ -293,9 +297,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		else if (command.equals("Normal")) world = new WorldMinesweeper(15, 15); //TODO: add
 		else if (command.equals("Hard")) world = new WorldMinesweeper(25, 25); //TODO: add*/
 		else if (command.equals("Remove All Flags")) world.removeAllFlags();
-		
 		else if (command.equals("Quit")) System.exit(EXIT_ON_CLOSE);
-		else if (command.equals("Sounds Effect")); //TODO: add
 		else if (command.equals("Rules")) {
 			try {
 				world.OpenRules();
@@ -309,7 +311,8 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
-		else return;
+			
+		else;
 		
 		screen.repaint();
 	}
