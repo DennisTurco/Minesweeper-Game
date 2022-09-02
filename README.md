@@ -1,6 +1,5 @@
 # Minesweeper-Game-WIP
 Minesweeper game made in java.
 
-![Minesweeper](https://user-images.githubusercontent.com/57963761/187942508-7f38df2a-aeba-434a-8b40-3ea2cfeab6bd.png)
-
-![Cattura](https://user-images.githubusercontent.com/57963761/187942524-211f502c-0f0b-45c1-8a33-77ea7644f61e.PNG)
+![Cattura1](https://user-images.githubusercontent.com/57963761/188160048-fa6c9300-ed7d-4fa8-b929-88204d786ff2.PNG)
+![Cattura2](https://user-images.githubusercontent.com/57963761/188160057-1755c0a3-85b0-4dc9-bfb2-47560382b4fa.PNG)
