@@ -60,7 +60,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		
 		Icon icon1 = new ImageIcon("res/tile_green_normal.png");
 		Icon icon2 = new ImageIcon("res/flag.png");
-		Icon icon3 = new ImageIcon("res/bomb.png");
+		Icon icon3 = new ImageIcon("res/clock.png");
 		
 		tiles_number = new JButton("Tiles = ");
 		flags_number = new JButton("Flags = ");
@@ -306,7 +306,10 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	public void actionPerformed(ActionEvent e) {	
 		String command = e.getActionCommand();
 		
-		if(command.equals("Restart")) world.reset();
+		if(command.equals("Restart")) {
+			world.reset();
+			screen.repaint();
+		}
 		/*else if (command.equals("Easy")) { 
 			world = new WorldMinesweeper(7, 7); 
 			world.draw(getGraphics());
@@ -314,7 +317,10 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		
 		else if (command.equals("Normal")) world = new WorldMinesweeper(15, 15); //TODO: add
 		else if (command.equals("Hard")) world = new WorldMinesweeper(25, 25); //TODO: add*/
-		else if (command.equals("Remove All Flags")) world.removeAllFlags();
+		else if (command.equals("Remove All Flags")) {
+			world.removeAllFlags();
+			screen.repaint();
+		}
 		else if (command.equals("Quit")) System.exit(EXIT_ON_CLOSE);
 		else if (command.equals("Share")) {
 			//messaggio pop-up
@@ -343,8 +349,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 			}
 			
 		else;
-		
-		screen.repaint();
 	}
 	
 }
