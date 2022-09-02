@@ -1,18 +1,5 @@
 package game;
 
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-
-import game.FrameMinesweeper.Screen;
-
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
@@ -20,15 +7,17 @@ import java.awt.Graphics;
 import java.awt.BorderLayout;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.StringSelection;
+import java.awt.Toolkit;
 
-import java.awt.*;
 import javax.swing.*;
 
 
@@ -45,9 +34,9 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	private JMenuBar menu_bar;
 	private JToolBar tool_bar;
 	
-	private static JLabel flags_number;
-	private static JLabel tiles_number;
-	private static JLabel time_number;
+	private static JButton flags_number;
+	private static JButton tiles_number;
+	private static JButton time_number;
 	private static JCheckBoxMenuItem sounds;
 	
 	private int insetLeft;
@@ -62,17 +51,42 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		this.setLayout(new BorderLayout());
 		add(screen, BorderLayout.CENTER);
 		
-		// ToolBar
+		// ------ ToolBar
 		tool_bar = new JToolBar();
-		this.add(tool_bar, BorderLayout.PAGE_START);
 		tool_bar.setFloatable(false);
+		this.add(tool_bar, BorderLayout.NORTH);
 		
-		tiles_number = new JLabel("Tiles = ");
-		flags_number = new JLabel("Flags = ");
-		time_number = new JLabel("Time = ");
-		tool_bar.add(tiles_number);
-		tool_bar.add(flags_number);
-		tool_bar.add(time_number);
+		JPanel panel = new JPanel(); // mi serve per centrare gli elementi
+		
+		Icon icon1 = new ImageIcon("res/tile_green_normal.png");
+		Icon icon2 = new ImageIcon("res/flag.png");
+		Icon icon3 = new ImageIcon("res/bomb.png");
+		
+		tiles_number = new JButton("Tiles = ");
+		flags_number = new JButton("Flags = ");
+		time_number = new JButton("Time = ");
+		
+		tiles_number.setIcon(icon1);
+		flags_number.setIcon(icon2);
+		time_number.setIcon(icon3);
+		
+		tiles_number.setBorderPainted(false);
+		flags_number.setBorderPainted(false);
+		time_number.setBorderPainted(false);
+		
+		tiles_number.setFocusPainted(false);
+		flags_number.setFocusPainted(false);
+		time_number.setFocusPainted(false);
+		
+		tiles_number.setContentAreaFilled(false);
+		flags_number.setContentAreaFilled(false);
+		time_number.setContentAreaFilled(false);
+		
+		panel.add(tiles_number);
+		panel.add(flags_number);
+		panel.add(time_number);
+		tool_bar.add(panel);
+		// ------
 		
 		
 		//TODO: farla funzionare nella classe a parte richiamandola
@@ -94,6 +108,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		JMenuItem remove_all_flags = new JMenuItem("Remove all flags");
 		JMenuItem scoreboard = new JMenuItem("Scoreboard");
 		JMenuItem rules = new JMenuItem("How To Play");
+		JMenuItem share = new JMenuItem("Share");
 		JMenuItem quit = new JMenuItem("Quit");
 		JMenuItem easy = new JMenuItem("Easy");
 		JMenuItem normal = new JMenuItem("Normal");
@@ -105,6 +120,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		mnuGame.add(scoreboard);
 		mnuOptions.add(sounds);
 		mnuOptions.add(rules);
+		mnuOptions.add(share);
 		mnuOptions.add(quit);
 		submnuNewGame.add(easy);
 		submnuNewGame.add(normal);
@@ -117,6 +133,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		remove_all_flags.setActionCommand("Remove All Flags");
 		scoreboard.setActionCommand("Scoreboard");
 		rules.setActionCommand("Rules");
+		rules.setActionCommand("Share");
 		quit.setActionCommand("Quit");
 		easy.setActionCommand("Easy");
 		normal.setActionCommand("Normal");
@@ -128,6 +145,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		remove_all_flags.addActionListener(this);
 		scoreboard.addActionListener(this);
 		rules.addActionListener(this);
+		share.addActionListener(this);
 		quit.addActionListener(this);
 		easy.addActionListener(this);
 		normal.addActionListener(this);
@@ -205,7 +223,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	
 	// SETTER
 	public static void setFlagsNumber(int value) {
-		flags_number.setText("       Flags = " + value);
+		flags_number.setText("Flags = " + value);
 	}
 	
 	public static void setTilesNumber(int value) {
@@ -213,7 +231,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	} 
 	
 	public static void setTimer(float value) {
-		time_number.setText("       Time = " + value);
+		time_number.setText("Time = " + value);
 	}
 	
 	// MOUSE
@@ -298,6 +316,17 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		else if (command.equals("Hard")) world = new WorldMinesweeper(25, 25); //TODO: add*/
 		else if (command.equals("Remove All Flags")) world.removeAllFlags();
 		else if (command.equals("Quit")) System.exit(EXIT_ON_CLOSE);
+		else if (command.equals("Share")) {
+			//messaggio pop-up
+			JOptionPane.showMessageDialog(null, "Share link copied to clipboard!");
+	        
+			//copio nella clipboard il link
+	        String testString = "https://github.com/DennisTurco/Minesweeper-Game";
+	        StringSelection stringSelectionObj = new StringSelection(testString);
+	        Clipboard clipboardObj = Toolkit.getDefaultToolkit().getSystemClipboard();
+	        clipboardObj.setContents(stringSelectionObj, null);
+		}
+		
 		else if (command.equals("Rules")) {
 			try {
 				world.OpenRules();
@@ -305,6 +334,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 				e1.printStackTrace();
 			}
 		}
+		
 		else if (command.equals("Scoreboard"))
 			try {
 				world.OpenScoreboard();

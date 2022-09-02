@@ -1,5 +1,7 @@
 package game;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,6 +17,12 @@ class TimerMinesweeper {
 		task = new TimerTask() {
 			public void run() {
 				TIMER += 0.001; //incremento di un millisecondo
+				
+				// elimino le ultime cifre decimali
+				BigDecimal bd = new BigDecimal(TIMER); 
+				BigDecimal res = bd.setScale(3, RoundingMode.HALF_UP);
+				TIMER = res.floatValue();
+				
 				if (TIMER < 99999) FrameMinesweeper.setTimer(TIMER);
 			}
 		};

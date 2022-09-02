@@ -166,7 +166,10 @@ class WorldMinesweeper {
 			if (!dead) {
 				// sound
 				try {
-					openSound(".//res//placeflag.wav");
+					String []choose = {"sound_effect_open1.wav", "sound_effect_open2.wav", "sound_effect_open3.wav", "sound_effect_open4.wav"}; 
+					Random random = new Random(); 
+					int index = random.nextInt(4-1) + 1;
+					openSound(".//res//"+choose[index]);
 				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 					e.printStackTrace();
 				}
@@ -208,10 +211,12 @@ class WorldMinesweeper {
 			showNumberOfFlag(); // ricalcola il numero di flag
 			
 			// sound
-			try {
-				openSound(".//res//placeflag.wav");
-			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-				e.printStackTrace();
+			if (!matrix[x_axis][y_axis].isOpened()) {
+				try {
+					openSound(".//res//sound_effect_flag.wav");
+				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+					e.printStackTrace();
+				}
 			}
 			
 		}
