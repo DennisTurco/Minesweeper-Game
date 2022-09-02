@@ -5,7 +5,7 @@ import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.BorderLayout;
-
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -83,11 +83,18 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		time_number.setContentAreaFilled(false);
 		
 		panel.add(tiles_number);
-		panel.add(flags_number);
 		panel.add(time_number);
+		panel.add(flags_number);
 		tool_bar.add(panel);
 		// ------
 		
+		// Author
+		/*JPanel panel_author = new JPanel();
+		JLabel author = new JLabel("© Dennis Turco 2022");
+		author.setForeground(Color.WHITE);	
+		panel_author.setOpaque(false);
+		panel_author.add(author);
+		screen.add(panel_author);*/
 		
 		//TODO: farla funzionare nella classe a parte richiamandola
 		addWindowListener(this);
@@ -201,8 +208,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	    g.setFont(font);
 	    // Draw the String
 	    g.drawString(text, x, y);
-	    
-	    screen.repaint();
 	}
 	
 	
@@ -216,7 +221,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	}
 	
 	public static boolean isSoundEffectActive() {
-		screen.repaint(); // evito bug grafici
 		return sounds.isSelected();
 	}
 	

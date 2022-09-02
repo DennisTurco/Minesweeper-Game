@@ -16,11 +16,12 @@ class TimerMinesweeper {
 		timer = new Timer();
 		task = new TimerTask() {
 			public void run() {
-				TIMER += 0.001; //incremento di un millisecondo
+				
+				TIMER += 0.1; //incremento di un decimo di secondo
 				
 				// elimino le ultime cifre decimali
 				BigDecimal bd = new BigDecimal(TIMER); 
-				BigDecimal res = bd.setScale(3, RoundingMode.HALF_UP);
+				BigDecimal res = bd.setScale(1, RoundingMode.HALF_UP);
 				TIMER = res.floatValue();
 				
 				if (TIMER < 99999) FrameMinesweeper.setTimer(TIMER);
@@ -31,7 +32,7 @@ class TimerMinesweeper {
 	}
 	
 	public void startTimer() {
-		timer.scheduleAtFixedRate(task, 1000, 1);
+		timer.scheduleAtFixedRate(task, 1000, 100);
 		timer_running = true;
 	}
 	
