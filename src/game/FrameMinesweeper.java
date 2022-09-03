@@ -143,7 +143,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		remove_all_flags.setActionCommand("Remove All Flags");
 		scoreboard.setActionCommand("Scoreboard");
 		rules.setActionCommand("Rules");
-		rules.setActionCommand("Share");
+		share.setActionCommand("Share");
 		quit.setActionCommand("Quit");
 		easy.setActionCommand("Easy");
 		normal.setActionCommand("Normal");

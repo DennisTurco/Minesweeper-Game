@@ -7,6 +7,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import java.awt.image.BufferedImage;
@@ -31,6 +32,7 @@ class WorldMinesweeper {
 	private static boolean started;
 	private static TileMinesweeper[][] matrix;
 	private static TimerMinesweeper timer = new TimerMinesweeper();
+	private static String scoreboard = "";
 	
 	// scalo le immagini in base alla dimensione dello schermo
 	private BufferedImage bomb_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb_face.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
@@ -302,15 +304,25 @@ class WorldMinesweeper {
 		}
 	}
 	
-	public void OpenRules () throws Exception {
-		Runtime runtime = Runtime.getRuntime();
-		runtime.exec("notepad.exe .//res//rules");
+	public void OpenRules () throws Exception {	
+		ImageIcon icon = new ImageIcon(".//res//info.png");
+		JOptionPane.showMessageDialog(null, 
+				"Minesweeper rules are very simple: \r\n"
+				+ "			- The board is divided into cells, with mines randomly distributed. \r\n"
+				+ "			- To win, you need to open all the cells. \r\n"
+				+ "			- The number on a cell shows the number of mines adjacent to it. \r\n"
+				+ "			- Using this information, you can determine cells that are safe, and cells that contain mines. \r\n"
+				+ "			- Cells suspected of being mines can be marked with a flag using the right mouse button.",
+				"Minesweeper - HOT TO PLAY:",
+				JOptionPane.PLAIN_MESSAGE, icon); //messaggio popup
+
 	}
 	
 	// ######################## Scoreboard ########################
 	public void OpenScoreboard() throws Exception {
-		Runtime runtime = Runtime.getRuntime();
-		runtime.exec("notepad.exe .//res//scoreboard");
+		getScoreboard();
+		ImageIcon icon = new ImageIcon(".//res//trophy.png");
+		JOptionPane.showMessageDialog(null, scoreboard, "Scoreboard", JOptionPane.PLAIN_MESSAGE, icon); //messaggio popup
 	}
 	
 	private void newScoreScoreboard(String name) throws IOException {
@@ -318,19 +330,19 @@ class WorldMinesweeper {
         bw.write("" + name + " -->  Seconds: " + timer.getTimer() + "\n");
         bw.close();
         
-        SortScoreboard(); //ordino la scoreboard
+        getScoreboard(); //ottengo la scoreboard
 	}
 	
-	private void SortScoreboard() {
-		//leggo le righe
+	private void getScoreboard() {
 		int DIM_MAX = 11;
 		String []list = new String[DIM_MAX]; //la classifica è una top 10
 		
+		//leggo le righe
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(".//res//scoreboard"));
 			
 			for (int i=0; i<DIM_MAX; i++) {
-				if ((list[i] = br.readLine()) != null) ;
+				if ((list[i] = br.readLine()) != null);
 			}
 			
 			br.close();
@@ -340,6 +352,31 @@ class WorldMinesweeper {
 		}
 		
 		//ordino
+		list = sortScoreboard(list, DIM_MAX);
+		
+		// scrivo i nuovi valori ordinati
+		BufferedWriter bw;
+		try {
+			bw = new BufferedWriter(new FileWriter(".//res//scoreboard", false)); //false = append
+			for (int i=0; i<DIM_MAX-1; i++) {
+	        	if (list[i] != null) bw.write("" + list[i] + "\n");
+	        }
+	        bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+        
+		
+		// salvo nella variabile globale
+		scoreboard = "";
+		for (int i=0; i<list.length; i++) {
+			if (list[i] != null) scoreboard = scoreboard + (i+1) + ". " + list[i] + "\n";
+		}
+		
+		
+	}
+	
+	private String[] sortScoreboard(String[] list, int DIM_MAX) {
 		float value1 = 0, value2 = 0;
 		for (int i=0; i<DIM_MAX; i++) {
 			if (list[i] != null) {
@@ -370,25 +407,11 @@ class WorldMinesweeper {
 			}
 		}
 		
-		// scrivo i nuovi valori ordinati
-		BufferedWriter bw;
-		try {
-			bw = new BufferedWriter(new FileWriter(".//res//scoreboard", false)); //false = append
-			for (int i=0; i<DIM_MAX-1; i++) {
-	        	if (list[i] != null) bw.write("" + list[i] + "\n");
-	        }
-	        bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-        
-		
-		
+		return list;
 	}
 	// ########################
 	
 	
-	//TODO: open()
 	private void open(int x, int y) {
 		matrix[x][y].setOpened(true);
 		
