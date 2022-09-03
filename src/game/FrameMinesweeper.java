@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -17,6 +18,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.StringSelection;
 import java.awt.Toolkit;
+import java.awt.Point;
+
 
 import javax.swing.*;
 
@@ -173,6 +176,11 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		
 		ImageIcon image = new ImageIcon(".//res//bomb.png"); //crea un'icona
 		setIconImage(image.getImage());	//cambia l'icona del frame
+		
+		
+		// Custom Cursor
+		setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(".//res//cursor.png").getImage(),new Point(0,0),"custom cursor"));
+		
 		
 		// Setting Borders
 		setBorders();
