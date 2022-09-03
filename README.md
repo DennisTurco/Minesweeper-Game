@@ -1,4 +1,4 @@
-# Minesweeper-Game-WIP
+# Minesweeper-Game
 Minesweeper game made in java.
 This game required: https://www.oracle.com/java/technologies/downloads/#jdk18-windows
 
