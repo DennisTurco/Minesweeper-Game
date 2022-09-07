@@ -1,6 +1,7 @@
 package game;
 
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -8,7 +9,10 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.*;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -32,7 +36,7 @@ class WorldMinesweeper {
 	private static boolean started;
 	private static TileMinesweeper[][] matrix;
 	private static TimerMinesweeper timer = new TimerMinesweeper();
-	private static String scoreboard = "";
+	private static String[] list;
 	
 	// scalo le immagini in base alla dimensione dello schermo
 	private BufferedImage bomb_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb_face.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
@@ -45,7 +49,6 @@ class WorldMinesweeper {
 	private BufferedImage error_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/error.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
 	
 	//TODO: aggiungere la texture di un fiore da inserire quando si vince
-	//TODO: aggiungere i suoni e migliorarli
 	//TODO: aggiungere la possibilità di cambiare difficoltà
 	//TODO: aggiungere delay tra le immagini
 	//TODO: aggiungere hover sulle caselle selezionate
@@ -122,8 +125,6 @@ class WorldMinesweeper {
 
 	
 	public void left_click(int x, int y) {
-		
-		
 		int x_axis = x/TileMinesweeper.getWidth();
 		int y_axis = y/TileMinesweeper.getHeight();
 		
@@ -134,9 +135,7 @@ class WorldMinesweeper {
 			}
 		}
 		
-		
-		if (dead == false && finish == false) {
-			
+		if (dead == false && finish == false) {	
 			started = true;
 			
 			if (timer.isTimeRunning() == false) { //avvio il timer
@@ -177,7 +176,6 @@ class WorldMinesweeper {
 				}
 			}
 			
-			
 			checkFinish();
 			
 			if ((finish == true || dead == true) && timer.isTimeRunning() == true ) {
@@ -186,11 +184,11 @@ class WorldMinesweeper {
 			}
 			
 			if (dead == false && finish == true) {
-			    String result = JOptionPane.showInputDialog(null, "Enter your name:", "Congratulations!! Seconds Passed = " + timer.getTimer(), JOptionPane.INFORMATION_MESSAGE); //messaggio popup
 			    try {
-			    	System.out.println(result.length());
-					if (result.length() > 0) newScoreScoreboard(result); // passo il nome del vincitore nella scoreboard
-				} catch (IOException e) {
+				    String result = JOptionPane.showInputDialog(null, "Enter your name:", "Congratulations!! Seconds Passed = " + timer.getTimer(), JOptionPane.INFORMATION_MESSAGE); //messaggio popup
+				    if (result.length() > 0) newScoreScoreboard(result); // passo il nome del vincitore nella scoreboard
+					OpenScoreboard(result);
+				} catch (Exception e) {
 					e.printStackTrace();
 				} 
 			   
@@ -253,6 +251,35 @@ class WorldMinesweeper {
 		
 	}
 	
+	
+	//TODO: fix
+	private void winLayout() {
+		// tolgo le bandierine
+		removeAllFlags();
+		
+		try {
+			TimeUnit.MILLISECONDS.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// inserisco i fiori 
+		for (int i=0; i<ROWS; i++) {
+			for (int j=0; j<COLS; j++) {
+				if (matrix[i][j].isBomb()) {
+					try {
+						TimeUnit.MILLISECONDS.sleep(100);
+						matrix[i][j].placeFlower();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
 	public static void reset() {
 		
 		// azzero il campo da gioco
@@ -313,16 +340,43 @@ class WorldMinesweeper {
 				+ "			- The number on a cell shows the number of mines adjacent to it. \r\n"
 				+ "			- Using this information, you can determine cells that are safe, and cells that contain mines. \r\n"
 				+ "			- Cells suspected of being mines can be marked with a flag using the right mouse button.",
-				"Minesweeper - HOT TO PLAY:",
+				"How To Play",
 				JOptionPane.PLAIN_MESSAGE, icon); //messaggio popup
 
 	}
 	
 	// ######################## Scoreboard ########################
-	public void OpenScoreboard() throws Exception {
+	public void OpenScoreboard(String player_name) throws Exception {
 		getScoreboard();
-		ImageIcon icon = new ImageIcon(".//res//trophy.png");
-		JOptionPane.showMessageDialog(null, scoreboard, "Scoreboard", JOptionPane.PLAIN_MESSAGE, icon); //messaggio popup
+		
+		
+		// utilizzo le JLabel anzichè semplici String perchè voglio colorare la stringa appena aggiunta
+		String new_score = player_name + " -->  Seconds: " + timer.getTimer();
+		JPanel pnl = new JPanel();
+		pnl.setBounds(61, 11, 81, 140);
+		pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS)); // VerticalLayout
+		JLabel []labels = new JLabel[list.length];
+			
+		for (int i=0; i<list.length; i++) {
+			if (list[i] != null) {
+				
+				labels[i] = new JLabel();
+				
+				if (list[i].equals(new_score)) { // coloro solo quella appena inserita (se e solo se entra in top) 
+					new_score = (i+1) + ". " + new_score + "\n";
+					labels[i].setText(new_score);
+					labels[i].setForeground(new Color(50,205,50));
+				}
+				
+				else labels[i].setText((i+1) + ". " + list[i]);
+				
+				pnl.add(labels[i]);
+			}
+		}
+		
+		ImageIcon icon = new ImageIcon(".//res//trophy.png");		
+		JOptionPane.showMessageDialog(null, pnl, "Scoreboard", JOptionPane.PLAIN_MESSAGE, icon); //messaggio popup
+		
 	}
 	
 	private void newScoreScoreboard(String name) throws IOException {
@@ -335,7 +389,7 @@ class WorldMinesweeper {
 	
 	private void getScoreboard() {
 		int DIM_MAX = 11;
-		String []list = new String[DIM_MAX]; //la classifica è una top 10
+		list = new String[DIM_MAX]; //la classifica è una top 10
 		
 		//leggo le righe
 		try {
@@ -347,7 +401,6 @@ class WorldMinesweeper {
 			
 			br.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -364,15 +417,7 @@ class WorldMinesweeper {
 	        bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
-        
-		
-		// salvo nella variabile globale
-		scoreboard = "";
-		for (int i=0; i<list.length; i++) {
-			if (list[i] != null) scoreboard = scoreboard + (i+1) + ". " + list[i] + "\n";
-		}
-		
+		} 		
 		
 	}
 	
@@ -449,6 +494,9 @@ class WorldMinesweeper {
 			}
 		}
 	}
+	
+	
+	
 	
 	
 	// GETTER

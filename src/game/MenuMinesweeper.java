@@ -42,7 +42,6 @@ class MenuMinesweeper extends JFrame implements WindowListener, ActionListener {
 		
 		mnuGame.add(new_game);
 		mnuOptions.add(quit);
-		
 	}
 	
 	@Override

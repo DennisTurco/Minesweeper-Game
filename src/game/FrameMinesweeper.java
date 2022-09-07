@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -171,7 +172,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		
 		this.setTitle("Minesweeper");
 		this.setResizable(false);
-		this.setLocation(650, 200); // per far aprire la finestra a centro schermo
+        this.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - getScreenWidth()) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - getScreenHeight()) / 2); // setto la finestra al centro
 		this.setVisible(true);
 		
 		ImageIcon image = new ImageIcon(".//res//bomb.png"); //crea un'icona
@@ -261,6 +262,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
+
 	}
 	
 	@Override
@@ -333,7 +335,9 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 			world.removeAllFlags();
 			screen.repaint();
 		}
-		else if (command.equals("Quit")) System.exit(EXIT_ON_CLOSE);
+		else if (command.equals("Quit")) {
+			System.exit(EXIT_ON_CLOSE);
+		}
 		else if (command.equals("Share")) {
 			//messaggio pop-up
 			JOptionPane.showMessageDialog(null, "Share link copied to clipboard!");
@@ -344,7 +348,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	        Clipboard clipboardObj = Toolkit.getDefaultToolkit().getSystemClipboard();
 	        clipboardObj.setContents(stringSelectionObj, null);
 		}
-		
 		else if (command.equals("Rules")) {
 			try {
 				world.OpenRules();
@@ -352,14 +355,12 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 				e1.printStackTrace();
 			}
 		}
-		
 		else if (command.equals("Scoreboard"))
 			try {
-				world.OpenScoreboard();
+				world.OpenScoreboard(null);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
-			
 		else;
 	}
 	

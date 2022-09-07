@@ -3,6 +3,7 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.TimeUnit;
 
 public class TileMinesweeper {
 	private BufferedImage normal;
@@ -97,6 +98,10 @@ public class TileMinesweeper {
 		else{
 			if(!opened && WorldMinesweeper.getN_FLAGS() > 0) flag = true; // metto la bandiera solo se la casella non è già aperta e non ho raggiunto il numero massimo di bandiere inseribili
 		}
+	}
+	
+	public void placeFlower() {
+		if(!opened) bomb = true; 
 	}
 	
 	public boolean isFlag() {
