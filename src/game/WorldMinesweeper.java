@@ -12,6 +12,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.*;
 
 import java.awt.image.BufferedImage;
@@ -29,7 +31,7 @@ import java.awt.Rectangle;
 class WorldMinesweeper {
 	private static int COLS = 15;
 	private static int ROWS = 15;
-	private static int N_BOMBS = COLS*ROWS*16/100; // la quantit‡ di bombe Ë data circa dal 16% del numero totale di caselle (COLS*ROWS)
+	private static int N_BOMBS = COLS*ROWS*16/100; // la quantit√† di bombe √® data circa dal 16% del numero totale di caselle (COLS*ROWS)
 	private static int N_FLAGS = N_BOMBS;
 	private static boolean dead;
 	private static boolean finish;
@@ -49,7 +51,7 @@ class WorldMinesweeper {
 	private BufferedImage error_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/error.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
 	
 	//TODO: aggiungere la texture di un fiore da inserire quando si vince
-	//TODO: aggiungere la possibilit‡ di cambiare difficolt‡
+	//TODO: aggiungere la possibilit√† di cambiare difficolt√†
 	//TODO: aggiungere delay tra le immagini
 	//TODO: aggiungere hover sulle caselle selezionate
 	
@@ -242,7 +244,7 @@ class WorldMinesweeper {
 					dead = true;
 					return;
 				} 
-				if (matrix[i][j].isBomb() == false && matrix[i][j].isOpened() == false) { // se trovo una casella non bomba non aperta allora non Ë terminato
+				if (matrix[i][j].isBomb() == false && matrix[i][j].isOpened() == false) { // se trovo una casella non bomba non aperta allora non √® terminato
 					finish = false;
 					return;
 				}
@@ -313,7 +315,7 @@ class WorldMinesweeper {
 	
 	
 	public void draw(Graphics g){
-		Font font = new Font("SansSerif", 0, FrameMinesweeper.getScreenWidth()*10/100); // la scritta sar‡ con una grandezza del 10% della finestra di gioco
+		Font font = new Font("SansSerif", 0, FrameMinesweeper.getScreenWidth()*10/100); // la scritta sar√† con una grandezza del 10% della finestra di gioco
 		Rectangle rect = new Rectangle(FrameMinesweeper.width, FrameMinesweeper.height);
 		for(int x = 0;x < COLS;x++){
 			for(int y = 0;y < ROWS;y++){
@@ -345,12 +347,24 @@ class WorldMinesweeper {
 
 	}
 	
+	public void OpenCredits() {
+		ImageIcon icon = new ImageIcon(".//res//author_logo.png");
+		JOptionPane.showMessageDialog(null, 
+				"<html><u>2022 ¬© Dennis Turco</u></html>\r\n"
+				+ "<html><i>Author</i>: Dennis Turco</html>\r\n"
+				+ "<html><i>GitHub</i>: <a href='https://github.com/DennisTurco'>https://github.com/DennisTurco </a></html>\r\n"
+				+ "<html><i>Web Site</i>: <a href='https://dennisturco.github.io/'>https://dennisturco.github.io/ </a></html>",
+				"Credits",
+				JOptionPane.PLAIN_MESSAGE, icon); //messaggio popup
+	}
+
+	
 	// ######################## Scoreboard ########################
 	public void OpenScoreboard(String player_name) throws Exception {
 		getScoreboard();
 		
 		
-		// utilizzo le JLabel anzichË semplici String perchË voglio colorare la stringa appena aggiunta
+		// utilizzo le JLabel anzich√® semplici String perch√® voglio colorare la stringa appena aggiunta
 		String new_score = player_name + " -->  Seconds: " + timer.getTimer();
 		JPanel pnl = new JPanel();
 		pnl.setBounds(61, 11, 81, 140);
@@ -389,7 +403,7 @@ class WorldMinesweeper {
 	
 	private void getScoreboard() {
 		int DIM_MAX = 11;
-		list = new String[DIM_MAX]; //la classifica Ë una top 10
+		list = new String[DIM_MAX]; //la classifica √® una top 10
 		
 		//leggo le righe
 		try {

@@ -120,6 +120,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		JMenuItem scoreboard = new JMenuItem("Scoreboard");
 		JMenuItem rules = new JMenuItem("How To Play");
 		JMenuItem share = new JMenuItem("Share");
+		JMenuItem credits = new JMenuItem("Credits");
 		JMenuItem quit = new JMenuItem("Quit");
 		JMenuItem easy = new JMenuItem("Easy");
 		JMenuItem normal = new JMenuItem("Normal");
@@ -132,6 +133,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		mnuOptions.add(sounds);
 		mnuOptions.add(rules);
 		mnuOptions.add(share);
+		mnuOptions.add(credits);
 		mnuOptions.add(quit);
 		submnuNewGame.add(easy);
 		submnuNewGame.add(normal);
@@ -145,6 +147,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		scoreboard.setActionCommand("Scoreboard");
 		rules.setActionCommand("Rules");
 		share.setActionCommand("Share");
+		credits.setActionCommand("Credits");
 		quit.setActionCommand("Quit");
 		easy.setActionCommand("Easy");
 		normal.setActionCommand("Normal");
@@ -157,6 +160,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		scoreboard.addActionListener(this);
 		rules.addActionListener(this);
 		share.addActionListener(this);
+		credits.addActionListener(this);
 		quit.addActionListener(this);
 		easy.addActionListener(this);
 		normal.addActionListener(this);
@@ -351,6 +355,13 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		else if (command.equals("Rules")) {
 			try {
 				world.OpenRules();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}	
+		else if (command.equals("Credits")) {
+			try {
+				world.OpenCredits();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
