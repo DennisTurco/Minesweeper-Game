@@ -230,7 +230,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	}
 	
 	public static int getScreenHeight(){
-		return width;
+		return height;
 	}
 	
 	public static boolean isSoundEffectActive() {

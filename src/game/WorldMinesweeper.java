@@ -397,7 +397,6 @@ class WorldMinesweeper {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(".//res//scoreboard", true)); //true = append
         bw.write("" + name + " -->  Seconds: " + timer.getTimer() + "\n");
         bw.close();
-        
         getScoreboard(); //ottengo la scoreboard
 	}
 	
