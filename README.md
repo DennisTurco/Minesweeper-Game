@@ -1,20 +1,24 @@
-
-![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
-
+![Logo](https://user-images.githubusercontent.com/57963761/194574827-ae4a8f41-62fb-4e28-bd7a-8afef886c9ac.png)
 
 # Minesweeper Game
 
 Minesweeper game made in java.
+
+
 ## Installation
 
-
-
 *Note: to run the executable you need jdk18*: https://www.oracle.com/java/technologies/downloads 
+
 ## Demo
+
+https://user-images.githubusercontent.com/57963761/194575613-1e7b41ea-4907-43b7-a9ee-5dfd6c13f8a0.mp4
+
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![Cattura1](https://user-images.githubusercontent.com/57963761/188160048-fa6c9300-ed7d-4fa8-b929-88204d786ff2.PNG)
+![Cattura2](https://user-images.githubusercontent.com/57963761/188160057-1755c0a3-85b0-4dc9-bfb2-47560382b4fa.PNG)
+![Captursdfe](https://user-images.githubusercontent.com/57963761/194575683-23880fd6-7eac-4ea0-a17a-ed12168b56cd.PNG)
 
 
 ## Licence
