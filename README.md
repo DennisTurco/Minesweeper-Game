@@ -1,6 +1,32 @@
-# Minesweeper-Game
-Minesweeper game made in java.
-This game required: https://www.oracle.com/java/technologies/downloads/#jdk18-windows 
 
-![Cattura1](https://user-images.githubusercontent.com/57963761/188160048-fa6c9300-ed7d-4fa8-b929-88204d786ff2.PNG)
-![Cattura2](https://user-images.githubusercontent.com/57963761/188160057-1755c0a3-85b0-4dc9-bfb2-47560382b4fa.PNG)
+![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
+
+
+# Minesweeper Game
+
+Minesweeper game made in java.
+## Installation
+
+
+
+*Note: to run the executable you need jdk18*: https://www.oracle.com/java/technologies/downloads 
+## Demo
+
+## Screenshots
+
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+
+## Licence
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+
+## Authors
+
+- [@DennisTurco](https://www.github.com/DennisTurco)
+
+
+## Support
+
+For support, email: dennisturco@gmail.com.
+
