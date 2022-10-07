@@ -11,7 +11,7 @@ Minesweeper game made in java.
 
 ## Demo
 
-https://user-images.githubusercontent.com/57963761/194575613-1e7b41ea-4907-43b7-a9ee-5dfd6c13f8a0.mp4
+![gifgame](https://user-images.githubusercontent.com/57963761/194577195-c6990e56-5df9-4ab1-a850-1a01536a124b.gif)
 
 
 ## Screenshots
