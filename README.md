@@ -33,4 +33,3 @@ Minesweeper game made in java.
 ## Support
 
 For support, email: dennisturco@gmail.com.
-

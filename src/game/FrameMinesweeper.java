@@ -5,9 +5,6 @@ import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -16,7 +13,6 @@ import java.awt.event.WindowListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.StringSelection;
 import java.awt.Toolkit;
 import java.awt.Point;
@@ -91,14 +87,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		panel.add(flags_number);
 		tool_bar.add(panel);
 		// ------
-		
-		// Author
-		/*JPanel panel_author = new JPanel();
-		JLabel author = new JLabel("© Dennis Turco 2022");
-		author.setForeground(Color.WHITE);	
-		panel_author.setOpaque(false);
-		panel_author.add(author);
-		screen.add(panel_author);*/
 		
 		//TODO: farla funzionare nella classe a parte richiamandola
 		addWindowListener(this);
@@ -347,7 +335,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 			JOptionPane.showMessageDialog(null, "Share link copied to clipboard!");
 	        
 			//copio nella clipboard il link
-	        String testString = "https://github.com/DennisTurco/Minesweeper-Game";
+	        String testString = "https://github.com/DennisTurco/Minesweeper-Game"; 
 	        StringSelection stringSelectionObj = new StringSelection(testString);
 	        Clipboard clipboardObj = Toolkit.getDefaultToolkit().getSystemClipboard();
 	        clipboardObj.setContents(stringSelectionObj, null);
