@@ -7,7 +7,7 @@ Minesweeper game made in java.
 
 ## Installation
 
-*Note: to run the executable you need jdk18*: https://www.oracle.com/java/technologies/downloads 
+download only the installer "Minesweeper v1.0 setup file.exe"
 
 ## Demo
 
