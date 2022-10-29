@@ -1,4 +1,4 @@
-![Logo](https://user-images.githubusercontent.com/57963761/198046008-1b89a49c-69f9-4ce3-bbfd-c6eef29b7fd8.png)
+![Logo](https://user-images.githubusercontent.com/57963761/194574827-ae4a8f41-62fb-4e28-bd7a-8afef886c9ac.png)
 
 # Minesweeper Game
 
@@ -7,8 +7,7 @@ Minesweeper game made in java.
 
 ## Installation
 
-To run the program, you have to download only the installer "**<ins>Minesweeper v1.0 setup file.exe</ins>**"<br>
-*Note: to run the executable you need jdk: https://www.oracle.com/java/technologies/downloads*
+*Note: to run the executable you need jdk18*: https://www.oracle.com/java/technologies/downloads 
 
 ## Demo
 
@@ -33,4 +32,4 @@ To run the program, you have to download only the installer "**<ins>Minesweeper 
 
 ## Support
 
-For support, email: dennisturco@gmail.com
+For support, email: dennisturco@gmail.com.
