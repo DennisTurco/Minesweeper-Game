@@ -32,4 +32,4 @@ To run the program, you have to download only the installer "**<ins>Minesweeper 
 
 ## Support
 
-For support, email: dennisturco@gmail.com.
+For support, email: dennisturco@gmail.com

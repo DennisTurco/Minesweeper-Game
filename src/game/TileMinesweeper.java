@@ -3,9 +3,10 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class TileMinesweeper {
+public class TileMinesweeper{
 	private BufferedImage normal;
 	private BufferedImage openedImage;
 	private BufferedImage flagImage;
@@ -33,6 +34,9 @@ public class TileMinesweeper {
 	
 	private static int width = FrameMinesweeper.getScreenWidth()/WorldMinesweeper.getROWS(); 
 	private static int height = FrameMinesweeper.getScreenHeight()/WorldMinesweeper.getCOLS(); 
+	
+	private static Timer timer;
+	private static TimerTask task;
 	
 	public TileMinesweeper(int x, int y, BufferedImage normal, BufferedImage bomb, BufferedImage bomb_face, BufferedImage openedImage, BufferedImage flag, BufferedImage error) {
 		this.x = x;
@@ -96,7 +100,7 @@ public class TileMinesweeper {
 	public void placeFlag() {
 		if(flag) flag = false;
 		else{
-			if(!opened && WorldMinesweeper.getN_FLAGS() > 0) flag = true; // metto la bandiera solo se la casella non è già aperta e non ho raggiunto il numero massimo di bandiere inseribili
+			if(!opened && WorldMinesweeper.getN_FLAGS() > 0) flag = true; // metto la bandiera solo se la casella non ï¿½ giï¿½ aperta e non ho raggiunto il numero massimo di bandiere inseribili
 		}
 	}
 	
@@ -142,6 +146,8 @@ public class TileMinesweeper {
 			}
 		}
 	}
+	
+	
 	
 	public static int getWidth() {
 		return width;

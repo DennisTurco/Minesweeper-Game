@@ -12,8 +12,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.*;
 
 import java.awt.image.BufferedImage;
@@ -40,6 +38,8 @@ class WorldMinesweeper {
 	private static TimerMinesweeper timer = new TimerMinesweeper();
 	private static String[] list;
 	
+	private static FrameMinesweeper frame;
+	
 	// scalo le immagini in base alla dimensione dello schermo
 	private BufferedImage bomb_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb_face.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
 	private BufferedImage bomb_no_face_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
@@ -51,7 +51,6 @@ class WorldMinesweeper {
 	private BufferedImage error_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/error.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
 	
 	//TODO: aggiungere la texture di un fiore da inserire quando si vince
-	//TODO: aggiungere la possibilità di cambiare difficoltà
 	//TODO: aggiungere delay tra le immagini
 	//TODO: aggiungere hover sulle caselle selezionate
 	
@@ -59,6 +58,46 @@ class WorldMinesweeper {
 	public WorldMinesweeper() {
 		
 		matrix = new TileMinesweeper[ROWS][COLS];
+		
+		frame = new FrameMinesweeper();
+		
+		frame.setDifficultyMode("difficultyNormal");
+		
+		// costruisco ogni cella
+		boolean tile_switch = false;
+		for (int i=0; i<ROWS; i++) {
+			for (int j=0; j<COLS; j++) {
+				if (tile_switch == false) {
+					matrix[i][j] = new TileMinesweeper(i, j, normal_img, bomb_no_face_img, bomb_img, pressed_img, flag_img, error_img);
+					tile_switch = true;
+				}
+				else {
+					matrix[i][j] = new TileMinesweeper(i, j, normal2_img, bomb_no_face_img, bomb_img, pressed2_img, flag_img, error_img);
+					tile_switch = false;
+				}
+				
+			}
+			
+		}
+		
+		reset(); //resetto il mondo e creo una nuova partita
+		
+	}
+	
+	public WorldMinesweeper(int cols, int rows) {
+		COLS = cols;
+		ROWS = rows;
+		N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
+		N_FLAGS = N_BOMBS;
+		
+		matrix = new TileMinesweeper[ROWS][COLS];
+		
+		// distruggo il vecchio frame
+		frame.setVisible(false); 
+		frame.dispose(); //Destroy the JFrame object
+		
+		// creo il nuovo frame
+		frame = new FrameMinesweeper();
 		
 		// costruisco ogni cella
 		boolean tile_switch = false;
@@ -100,7 +139,7 @@ class WorldMinesweeper {
 		
 	}
 	
-	public void showNumberOfFlag() {
+	public static void showNumberOfFlag() {
 		int count = 0;
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
@@ -109,10 +148,10 @@ class WorldMinesweeper {
 		}
 		
 		N_FLAGS = N_BOMBS-count;
-		FrameMinesweeper.setFlagsNumber(N_FLAGS);
+		frame.setFlagsNumber(N_FLAGS);
 	}
 	
-	public void showWrongFlags() {
+	public static void showWrongFlags() {
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
 				if (matrix[i][j].isFlag() && !(matrix[i][j].isBomb() || matrix[i][j].isBombFace())) {
@@ -126,7 +165,7 @@ class WorldMinesweeper {
 	}
 
 	
-	public void left_click(int x, int y) {
+	public static void left_click(int x, int y) {
 		int x_axis = x/TileMinesweeper.getWidth();
 		int y_axis = y/TileMinesweeper.getHeight();
 		
@@ -188,8 +227,8 @@ class WorldMinesweeper {
 			if (dead == false && finish == true) {
 			    try {
 				    String result = JOptionPane.showInputDialog(null, "Enter your name:", "Congratulations!! Seconds Passed = " + timer.getTimer(), JOptionPane.INFORMATION_MESSAGE); //messaggio popup
-				    if (result.length() > 0) newScoreScoreboard(result); // passo il nome del vincitore nella scoreboard
-					OpenScoreboard(result);
+				    if (result.length() > 0) newScoreScoreboard(result, frame.getDifficultyMode()); // passo il nome del vincitore nella scoreboard
+					OpenScoreboard(result, frame.getDifficultyMode());
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 
@@ -199,7 +238,7 @@ class WorldMinesweeper {
 
 	}
 	
-	public void right_click(int x, int y) {
+	public static void right_click(int x, int y) {
 		if(dead == false && finish == false){
 			
 			if (timer.isTimeRunning() == false) { //avvio il timer
@@ -225,8 +264,8 @@ class WorldMinesweeper {
 		
 	}
 	
-	public void openSound(String path) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		if (FrameMinesweeper.isSoundEffectActive() == false) return; // caso di uscita
+	public static void openSound(String path) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+		if (frame.isSoundEffectActive() == false) return; // caso di uscita
 		
 		File file = new File(path);
 		AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
@@ -236,7 +275,7 @@ class WorldMinesweeper {
 	}
 	
 	
-	private void checkFinish() {
+	private static void checkFinish() {
 		finish = true; 
 		for(int i = 0; i<COLS; i++) {
 			for(int j=0; j<ROWS; j++) {
@@ -301,9 +340,9 @@ class WorldMinesweeper {
 		set_numeber_of_near_bombs();
 		
 		// resetto i valori nella ToolBar
-		FrameMinesweeper.setFlagsNumber(N_BOMBS);
-		FrameMinesweeper.setTilesNumber(COLS*ROWS);
-		FrameMinesweeper.setTimer(0);	
+		frame.setFlagsNumber(N_BOMBS);
+		frame.setTilesNumber(COLS*ROWS);
+		frame.setTimer(0);	
 		
 		// restart timer
 		timer.setTimer(0);
@@ -314,9 +353,9 @@ class WorldMinesweeper {
 	}
 	
 	
-	public void draw(Graphics g){
-		Font font = new Font("SansSerif", 0, FrameMinesweeper.getScreenWidth()*10/100); // la scritta sarà con una grandezza del 10% della finestra di gioco
-		Rectangle rect = new Rectangle(FrameMinesweeper.width, FrameMinesweeper.height);
+	public static void draw(Graphics g){
+		Font font = new Font("SansSerif", 0, frame.getScreenWidth()*10/100); // la scritta sarà con una grandezza del 10% della finestra di gioco
+		Rectangle rect = new Rectangle(frame.width, frame.height);
 		for(int x = 0;x < COLS;x++){
 			for(int y = 0;y < ROWS;y++){
 				matrix[x][y].draw(g);
@@ -325,15 +364,15 @@ class WorldMinesweeper {
 		
 		if(dead){
 			g.setColor(Color.RED);
-			FrameMinesweeper.drawCenteredString(g, "Game Over!", rect, font);
+			frame.drawCenteredString(g, "Game Over!", rect, font);
 		}
 		else if(finish){
 			g.setColor(Color.GREEN);
-			FrameMinesweeper.drawCenteredString(g, "You Won!!", rect, font);
+			frame.drawCenteredString(g, "You Won!!", rect, font);
 		}
 	}
 	
-	public void OpenRules () throws Exception {	
+	public static void OpenRules () throws Exception {	
 		ImageIcon icon = new ImageIcon(".//res//info.png");
 		JOptionPane.showMessageDialog(null, 
 				"Minesweeper rules are very simple: \r\n"
@@ -347,7 +386,7 @@ class WorldMinesweeper {
 
 	}
 	
-	public void OpenCredits() {
+	public static void OpenCredits() {
 		ImageIcon icon = new ImageIcon(".//res//author_logo.png");
 		JOptionPane.showMessageDialog(null, 
 				"<html><u>2022 © Dennis Turco</u></html>\r\n"
@@ -360,8 +399,8 @@ class WorldMinesweeper {
 
 	
 	// ######################## Scoreboard ########################
-	public void OpenScoreboard(String player_name) throws Exception {
-		getScoreboard();
+	public static void OpenScoreboard(String player_name, String difficulty_mode) throws Exception {
+		getScoreboard(difficulty_mode);
 		
 		
 		// utilizzo le JLabel anzichè semplici String perchè voglio colorare la stringa appena aggiunta
@@ -393,20 +432,20 @@ class WorldMinesweeper {
 		
 	}
 	
-	private void newScoreScoreboard(String name) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new FileWriter(".//res//scoreboard", true)); //true = append
+	private static void newScoreScoreboard(String name, String difficulty_mode) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(".//res//scoreboard" + "_" + difficulty_mode, true)); //true = append
         bw.write("" + name + " -->  Seconds: " + timer.getTimer() + "\n");
         bw.close();
-        getScoreboard(); //ottengo la scoreboard
+        getScoreboard(difficulty_mode); //ottengo la scoreboard
 	}
 	
-	private void getScoreboard() {
+	private static void getScoreboard(String difficulty_mode) {
 		int DIM_MAX = 11;
 		list = new String[DIM_MAX]; //la classifica è una top 10
 		
 		//leggo le righe
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(".//res//scoreboard"));
+			BufferedReader br = new BufferedReader(new FileReader(".//res//scoreboard" + "_" + difficulty_mode));
 			
 			for (int i=0; i<DIM_MAX; i++) {
 				if ((list[i] = br.readLine()) != null);
@@ -423,7 +462,7 @@ class WorldMinesweeper {
 		// scrivo i nuovi valori ordinati
 		BufferedWriter bw;
 		try {
-			bw = new BufferedWriter(new FileWriter(".//res//scoreboard", false)); //false = append
+			bw = new BufferedWriter(new FileWriter(".//res//scoreboard" + "_" + difficulty_mode, false)); //false = append
 			for (int i=0; i<DIM_MAX-1; i++) {
 	        	if (list[i] != null) bw.write("" + list[i] + "\n");
 	        }
@@ -434,7 +473,7 @@ class WorldMinesweeper {
 		
 	}
 	
-	private String[] sortScoreboard(String[] list, int DIM_MAX) {
+	private static String[] sortScoreboard(String[] list, int DIM_MAX) {
 		float value1 = 0, value2 = 0;
 		for (int i=0; i<DIM_MAX; i++) {
 			if (list[i] != null) {
@@ -470,7 +509,7 @@ class WorldMinesweeper {
 	// ########################
 	
 	
-	private void open(int x, int y) {
+	private static void open(int x, int y) {
 		matrix[x][y].setOpened(true);
 		
 		if(matrix[x] [y].getAmountOfNearBombs() == 0) {
@@ -492,7 +531,7 @@ class WorldMinesweeper {
 		}
 	}
 	
-	public void showAllBombs () {
+	public static void showAllBombs () {
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
 				if ((matrix[i][j].isBomb() || matrix[i][j].isBombFace()) && matrix[i][j].isFlag() == false) matrix[i][j].setOpened(true);
@@ -500,7 +539,7 @@ class WorldMinesweeper {
 		}
 	}
 	
-	public void removeAllFlags() {
+	public static void removeAllFlags() {
 		for (int i=0; i<ROWS; i++) {
 			for (int j=0; j<COLS; j++) {
 				if (matrix[i][j].isFlag()) matrix[i][j].placeFlag();

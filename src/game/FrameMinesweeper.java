@@ -17,7 +17,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.Toolkit;
 import java.awt.Point;
 
-
+import javax.naming.InitialContext;
 import javax.swing.*;
 
 
@@ -27,17 +27,18 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	public static int width = 600; 
 	public static int height = 600;
 	
-	private static Screen screen;
-	private WorldMinesweeper world;
+	private Screen screen;
 	private Font font;
 	
 	private JMenuBar menu_bar;
 	private JToolBar tool_bar;
 	
-	private static JButton flags_number;
-	private static JButton tiles_number;
+	private JButton flags_number;
+	private JButton tiles_number;
 	private static JButton time_number;
-	private static JCheckBoxMenuItem sounds;
+	private JCheckBoxMenuItem sounds;
+	
+	private String current_difficult;
 	
 	private int insetLeft;
 	private int insetTop;
@@ -46,6 +47,8 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	public FrameMinesweeper () { 
 		
 		addMouseListener(this);
+		
+		Init();
 		
 		screen = new Screen();
 		this.setLayout(new BorderLayout());
@@ -99,13 +102,16 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		JMenu mnuGame = new JMenu("Game");
 		JMenu mnuOptions = new JMenu("Options");
 		JMenu submnuNewGame = new JMenu("New game");  //sub menu
+		JMenu submnuScoreboard = new JMenu("Scoreboard");  //sub menu
 		menu_bar.add(mnuGame);
 		menu_bar.add(mnuOptions);
 		
 		// Menu Items
 		JMenuItem restart = new JMenuItem("Restart");
 		JMenuItem remove_all_flags = new JMenuItem("Remove all flags");
-		JMenuItem scoreboard = new JMenuItem("Scoreboard");
+		JMenuItem scoreboard_easy = new JMenuItem("Scoreboard easy mode");
+		JMenuItem scoreboard_normal = new JMenuItem("Scoreboard normal mode");
+		JMenuItem scoreboard_hard = new JMenuItem("Scoreboard hard mode");
 		JMenuItem rules = new JMenuItem("How To Play");
 		JMenuItem share = new JMenuItem("Share");
 		JMenuItem credits = new JMenuItem("Credits");
@@ -117,7 +123,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		mnuGame.add(restart);
 		mnuGame.add(submnuNewGame);
 		mnuGame.add(remove_all_flags);
-		mnuGame.add(scoreboard);
+		mnuGame.add(submnuScoreboard);
 		mnuOptions.add(sounds);
 		mnuOptions.add(rules);
 		mnuOptions.add(share);
@@ -126,13 +132,15 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		submnuNewGame.add(easy);
 		submnuNewGame.add(normal);
 		submnuNewGame.add(hard);
+		submnuScoreboard.add(scoreboard_easy);
+		submnuScoreboard.add(scoreboard_normal);
+		submnuScoreboard.add(scoreboard_hard);
 		
 		sounds.setSelected(true);
 		
 		// Action Command
 		restart.setActionCommand("Restart");
 		remove_all_flags.setActionCommand("Remove All Flags");
-		scoreboard.setActionCommand("Scoreboard");
 		rules.setActionCommand("Rules");
 		share.setActionCommand("Share");
 		credits.setActionCommand("Credits");
@@ -140,12 +148,17 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		easy.setActionCommand("Easy");
 		normal.setActionCommand("Normal");
 		hard.setActionCommand("Hard");
+		scoreboard_easy.setActionCommand("Scoreboard Easy Mode");
+		scoreboard_normal.setActionCommand("Scoreboard Normal Mode");
+		scoreboard_hard.setActionCommand("Scoreboard Hard Mode");
 		sounds.setActionCommand("Sounds Effect");
 		
 		// Action Listener
 		restart.addActionListener(this);
 		remove_all_flags.addActionListener(this);
-		scoreboard.addActionListener(this);
+		scoreboard_easy.addActionListener(this);
+		scoreboard_normal.addActionListener(this);
+		scoreboard_hard.addActionListener(this);
 		rules.addActionListener(this);
 		share.addActionListener(this);
 		credits.addActionListener(this);
@@ -160,32 +173,30 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		remove_all_flags.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK)); // ctrl+f
 		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK)); // alt+f4
 		
-		world = new WorldMinesweeper();
-		
-		this.setTitle("Minesweeper");
-		this.setResizable(false);
-        this.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - getScreenWidth()) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - getScreenHeight()) / 2); // setto la finestra al centro
-		this.setVisible(true);
-		
 		ImageIcon image = new ImageIcon(".//res//bomb.png"); //crea un'icona
 		setIconImage(image.getImage());	//cambia l'icona del frame
-		
 		
 		// Custom Cursor
 		setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(".//res//cursor.png").getImage(),new Point(0,0),"custom cursor"));
 		
-		
 		// Setting Borders
 		setBorders();
-
+	}
+	
+	private void Init() {
+		this.setTitle("Minesweeper");
+		this.setResizable(false);
+        this.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - getScreenWidth()) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - getScreenHeight()) / 2); // setto la finestra al centro
+		this.setVisible(true);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public class Screen extends JPanel {
 		@Override
 		public void paintComponent(Graphics g) {
-			font = new Font("SansSerif", Font.BOLD, width/world.getCOLS() - width/world.getCOLS()*50/100); // la grandezza dei numeri all'interno delle caselle ridimensionata in base al numero di celle - il 50% del risultato
+			font = new Font("SansSerif", Font.BOLD, width/WorldMinesweeper.getCOLS() - width/WorldMinesweeper.getCOLS()*50/100); // la grandezza dei numeri all'interno delle caselle ridimensionata in base al numero di celle - il 50% del risultato
 			g.setFont(font);
-			world.draw(g);
+			WorldMinesweeper.draw(g);
 		}
 	}
 	
@@ -196,9 +207,8 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		setSize(width + insetLeft + getInsets().right, height + getInsets().bottom + insetTop + menu_bar.getHeight() + tool_bar.getHeight());
 	}
 	
-	
 	// https://stackoverflow.com/questions/27706197/how-can-i-center-graphics-drawstring-in-java
-	public static void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
+	public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
 	    // Get the FontMetrics
 	    FontMetrics metrics = g.getFontMetrics(font);
 	    // Determine the X coordinate for the text
@@ -211,7 +221,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	    g.drawString(text, x, y);
 	}
 	
-	
 	// GETTER
 	public static int getScreenWidth(){
 		return width;
@@ -221,17 +230,21 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		return height;
 	}
 	
-	public static boolean isSoundEffectActive() {
+	public boolean isSoundEffectActive() {
 		return sounds.isSelected();
+	}
+	
+	public String getDifficultyMode() {
+		return current_difficult;
 	}
 	
 	
 	// SETTER
-	public static void setFlagsNumber(int value) {
+	public void setFlagsNumber(int value) {
 		flags_number.setText("Flags = " + value);
 	}
 	
-	public static void setTilesNumber(int value) {
+	public void setTilesNumber(int value) {
 		tiles_number.setText("Tiles = " + value);
 	} 
 	
@@ -239,92 +252,77 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		time_number.setText("Time = " + value);
 	}
 	
+	public void setDifficultyMode(String difficulty) {
+		current_difficult = difficulty;
+	}
+	
 	// MOUSE
 	@Override
-	public void mousePressed(MouseEvent e) {
-		
-	}
+	public void mousePressed(MouseEvent e) {}
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if(e.getButton() == 1) world.left_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
-		if(e.getButton() == 3) world.right_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
+		if(e.getButton() == 1) WorldMinesweeper.left_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
+		if(e.getButton() == 3) WorldMinesweeper.right_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
 		screen.repaint();
 	}
 	
 	@Override
-	public void mouseEntered(MouseEvent e) {
-
-	}
+	public void mouseEntered(MouseEvent e) {}
 	
 	@Override
-	public void mouseExited(MouseEvent e) {
-			
-	}
+	public void mouseExited(MouseEvent e) {}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		
-	} 
+	public void mouseClicked(MouseEvent e) {} 
 	
 	@Override
-	public void windowOpened(WindowEvent e) {
-		
-	}
-
+	public void windowOpened(WindowEvent e) {}
 
 	@Override
-	public void windowClosing(WindowEvent e) {
-		
-	}
-
+	public void windowClosing(WindowEvent e) {}
 
 	@Override
-	public void windowClosed(WindowEvent e) {
-		
-	}
-
+	public void windowClosed(WindowEvent e) {}
 
 	@Override
-	public void windowIconified(WindowEvent e) {
-		
-	}
-
+	public void windowIconified(WindowEvent e) {}
 
 	@Override
-	public void windowDeiconified(WindowEvent e) {
-		
-	}
-
+	public void windowDeiconified(WindowEvent e) {}
 
 	@Override
-	public void windowActivated(WindowEvent e) {
-		
-	}
-
+	public void windowActivated(WindowEvent e) {}
 
 	@Override
-	public void windowDeactivated(WindowEvent e) {
-		
-	}
+	public void windowDeactivated(WindowEvent e) {}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {	
 		String command = e.getActionCommand();
 		
 		if(command.equals("Restart")) {
-			world.reset();
+			WorldMinesweeper.reset();
 			screen.repaint();
 		}
-		/*else if (command.equals("Easy")) { 
-			world = new WorldMinesweeper(7, 7); 
-			world.draw(getGraphics());
-		}	//TODO: add
+		else if (command.equals("Easy")) { 
+			width = 440;
+			height = 440;
+			new WorldMinesweeper(11, 11); 
+		}
 		
-		else if (command.equals("Normal")) world = new WorldMinesweeper(15, 15); //TODO: add
-		else if (command.equals("Hard")) world = new WorldMinesweeper(25, 25); //TODO: add*/
+		else if (command.equals("Normal")) {
+			width = 600;
+			height = 600;
+			new WorldMinesweeper(15, 15); 
+		}
+		else if (command.equals("Hard")) {
+			width = 840;
+			height = 840;
+			new WorldMinesweeper(21, 21);
+		}
 		else if (command.equals("Remove All Flags")) {
-			world.removeAllFlags();
+			WorldMinesweeper.removeAllFlags();
 			screen.repaint();
 		}
 		else if (command.equals("Quit")) {
@@ -342,24 +340,42 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		}
 		else if (command.equals("Rules")) {
 			try {
-				world.OpenRules();
+				WorldMinesweeper.OpenRules();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}	
 		else if (command.equals("Credits")) {
 			try {
-				world.OpenCredits();
+				WorldMinesweeper.OpenCredits();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
-		else if (command.equals("Scoreboard"))
+		else if (command.equals("Scoreboard Easy Mode")) {
 			try {
-				world.OpenScoreboard(null);
+				current_difficult = "difficultEasy";
+				WorldMinesweeper.OpenScoreboard(null, current_difficult);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+		}
+		else if (command.equals("Scoreboard Normal Mode")) {
+			try {
+				current_difficult = "difficultNormal";
+				WorldMinesweeper.OpenScoreboard(null, current_difficult);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+		else if (command.equals("Scoreboard Hard Mode")) {
+			try {
+				current_difficult = "difficultHard";
+				WorldMinesweeper.OpenScoreboard(null, current_difficult);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
 		else;
 	}
 	
