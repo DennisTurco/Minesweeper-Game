@@ -17,7 +17,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.Toolkit;
 import java.awt.Point;
 
-import javax.naming.InitialContext;
 import javax.swing.*;
 
 
@@ -37,8 +36,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	private JButton tiles_number;
 	private static JButton time_number;
 	private JCheckBoxMenuItem sounds;
-	
-	private String current_difficult;
 	
 	private int insetLeft;
 	private int insetTop;
@@ -234,11 +231,6 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		return sounds.isSelected();
 	}
 	
-	public String getDifficultyMode() {
-		return current_difficult;
-	}
-	
-	
 	// SETTER
 	public void setFlagsNumber(int value) {
 		flags_number.setText("Flags = " + value);
@@ -252,19 +244,20 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		time_number.setText("Time = " + value);
 	}
 	
-	public void setDifficultyMode(String difficulty) {
-		current_difficult = difficulty;
-	}
-	
 	// MOUSE
 	@Override
 	public void mousePressed(MouseEvent e) {}
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if(e.getButton() == 1) WorldMinesweeper.left_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
-		if(e.getButton() == 3) WorldMinesweeper.right_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
-		screen.repaint();
+		try {
+			if(e.getButton() == 1) WorldMinesweeper.left_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
+			if(e.getButton() == 3) WorldMinesweeper.right_click(e.getX() - insetLeft, e.getY() - insetTop - menu_bar.getHeight() - tool_bar.getHeight());
+			screen.repaint();
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			System.err.println("Exception --> " + ex);
+		}
+		
 	}
 	
 	@Override
@@ -308,18 +301,18 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		else if (command.equals("Easy")) { 
 			width = 440;
 			height = 440;
-			new WorldMinesweeper(11, 11); 
+			new WorldMinesweeper(WorldMinesweeper.DIFFICULTY[0]);
 		}
 		
 		else if (command.equals("Normal")) {
 			width = 600;
 			height = 600;
-			new WorldMinesweeper(15, 15); 
+			new WorldMinesweeper(WorldMinesweeper.DIFFICULTY[1]); 
 		}
 		else if (command.equals("Hard")) {
 			width = 840;
 			height = 840;
-			new WorldMinesweeper(21, 21);
+			new WorldMinesweeper(WorldMinesweeper.DIFFICULTY[2]);
 		}
 		else if (command.equals("Remove All Flags")) {
 			WorldMinesweeper.removeAllFlags();
@@ -354,24 +347,21 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		}
 		else if (command.equals("Scoreboard Easy Mode")) {
 			try {
-				current_difficult = "difficultEasy";
-				WorldMinesweeper.OpenScoreboard(null, current_difficult);
+				WorldMinesweeper.OpenScoreboard(null, WorldMinesweeper.DIFFICULTY[0]);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
 		else if (command.equals("Scoreboard Normal Mode")) {
 			try {
-				current_difficult = "difficultNormal";
-				WorldMinesweeper.OpenScoreboard(null, current_difficult);
+				WorldMinesweeper.OpenScoreboard(null, WorldMinesweeper.DIFFICULTY[1]);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
 		else if (command.equals("Scoreboard Hard Mode")) {
 			try {
-				current_difficult = "difficultHard";
-				WorldMinesweeper.OpenScoreboard(null, current_difficult);
+				WorldMinesweeper.OpenScoreboard(null, WorldMinesweeper.DIFFICULTY[2]);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}

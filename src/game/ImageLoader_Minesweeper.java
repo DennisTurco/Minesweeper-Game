@@ -3,7 +3,6 @@ package game;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 

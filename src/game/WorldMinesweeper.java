@@ -27,10 +27,10 @@ import java.awt.Font;
 import java.awt.Rectangle;
 
 class WorldMinesweeper {
-	private static int COLS = 15;
-	private static int ROWS = 15;
-	private static int N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
-	private static int N_FLAGS = N_BOMBS;
+	private static int COLS;
+	private static int ROWS;
+	private static int N_BOMBS; 
+	private static int N_FLAGS;
 	private static boolean dead;
 	private static boolean finish;
 	private static boolean started;
@@ -38,65 +38,57 @@ class WorldMinesweeper {
 	private static TimerMinesweeper timer = new TimerMinesweeper();
 	private static String[] list;
 	
+	public static String []DIFFICULTY = {"difficultyEasy", "difficultyNormal", "difficultyHard"};
+	private static String current_difficulty;
+	
 	private static FrameMinesweeper frame;
 	
 	// scalo le immagini in base alla dimensione dello schermo
-	private BufferedImage bomb_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb_face.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
-	private BufferedImage bomb_no_face_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
-	private BufferedImage flag_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/flag.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
-	private BufferedImage pressed_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_brown_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
-	private BufferedImage pressed2_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_brown2_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
-	private BufferedImage normal_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_green_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
-	private BufferedImage normal2_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_green2_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
-	private BufferedImage error_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/error.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+	private BufferedImage bomb_img;
+	private BufferedImage bomb_no_face_img;
+	private BufferedImage flag_img;
+	private BufferedImage pressed_img;
+	private BufferedImage pressed2_img;
+	private BufferedImage normal_img;
+	private BufferedImage normal2_img;
+	private BufferedImage error_img;
 	
 	//TODO: aggiungere la texture di un fiore da inserire quando si vince
 	//TODO: aggiungere delay tra le immagini
 	//TODO: aggiungere hover sulle caselle selezionate
 	
 	//CONSTRUCTOR
-	public WorldMinesweeper() {
+	public WorldMinesweeper(String difficulty) {
 		
-		matrix = new TileMinesweeper[ROWS][COLS];
-		
-		frame = new FrameMinesweeper();
-		
-		frame.setDifficultyMode("difficultyNormal");
-		
-		// costruisco ogni cella
-		boolean tile_switch = false;
-		for (int i=0; i<ROWS; i++) {
-			for (int j=0; j<COLS; j++) {
-				if (tile_switch == false) {
-					matrix[i][j] = new TileMinesweeper(i, j, normal_img, bomb_no_face_img, bomb_img, pressed_img, flag_img, error_img);
-					tile_switch = true;
-				}
-				else {
-					matrix[i][j] = new TileMinesweeper(i, j, normal2_img, bomb_no_face_img, bomb_img, pressed2_img, flag_img, error_img);
-					tile_switch = false;
-				}
-				
-			}
-			
+		// imposto la difficoltà corrente
+		if (difficulty.equals(DIFFICULTY[0])) {
+			current_difficulty = DIFFICULTY[0];
+			COLS = 11;
+			ROWS = 11;
 		}
-		
-		reset(); //resetto il mondo e creo una nuova partita
-		
-	}
-	
-	public WorldMinesweeper(int cols, int rows) {
-		COLS = cols;
-		ROWS = rows;
+		if (difficulty.equals(DIFFICULTY[1])) {
+			current_difficulty = DIFFICULTY[1];
+			COLS = 15;
+			ROWS = 15;
+		} 
+		if (difficulty.equals(DIFFICULTY[2])) {
+			current_difficulty = DIFFICULTY[2];
+			COLS = 21;
+			ROWS = 21;
+		} 
 		N_BOMBS = COLS*ROWS*16/100; // la quantità di bombe è data circa dal 16% del numero totale di caselle (COLS*ROWS)
 		N_FLAGS = N_BOMBS;
+		
+		scaleImages();
 		
 		matrix = new TileMinesweeper[ROWS][COLS];
 		
 		// distruggo il vecchio frame
-		frame.setVisible(false); 
-		frame.dispose(); //Destroy the JFrame object
+		if (frame != null) {
+			frame.setVisible(false); 
+			frame.dispose(); //Destroy the JFrame object
+		}
 		
-		// creo il nuovo frame
 		frame = new FrameMinesweeper();
 		
 		// costruisco ogni cella
@@ -117,7 +109,17 @@ class WorldMinesweeper {
 		}
 		
 		reset(); //resetto il mondo e creo una nuova partita
-		
+	}
+	
+	private void scaleImages() {
+		bomb_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb_face.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+		bomb_no_face_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/bomb.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+		flag_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/flag.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+		pressed_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_brown_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+		pressed2_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_brown2_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+		normal_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_green_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+		normal2_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/tile_green2_normal.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
+		error_img = ImageLoader_Minesweeper.scale(ImageLoader_Minesweeper.loadImage("res/error.png"), TileMinesweeper.getWidth(), TileMinesweeper.getHeight());
 	}
 	
 	private static void place_all_bombs() {
@@ -199,6 +201,7 @@ class WorldMinesweeper {
 					openSound(".//res//buttonEffect.wav");
 				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 					e.printStackTrace();
+					System.err.println("Exception --> " + e);
 				}
 			}
 			else if (matrix[x_axis][y_axis].getAmountOfNearBombs() == 0 && matrix[x_axis][y_axis].isBomb() == false) open(x_axis, y_axis);
@@ -214,6 +217,7 @@ class WorldMinesweeper {
 					openSound(".//res//"+choose[index]);
 				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 					e.printStackTrace();
+					System.err.println("Exception --> " + e);
 				}
 			}
 			
@@ -227,10 +231,11 @@ class WorldMinesweeper {
 			if (dead == false && finish == true) {
 			    try {
 				    String result = JOptionPane.showInputDialog(null, "Enter your name:", "Congratulations!! Seconds Passed = " + timer.getTimer(), JOptionPane.INFORMATION_MESSAGE); //messaggio popup
-				    if (result.length() > 0) newScoreScoreboard(result, frame.getDifficultyMode()); // passo il nome del vincitore nella scoreboard
-					OpenScoreboard(result, frame.getDifficultyMode());
+				    if (result.length() > 0) newScoreScoreboard(result); // passo il nome del vincitore nella scoreboard
+					OpenScoreboard(result, current_difficulty);
 				} catch (Exception e) {
 					e.printStackTrace();
+					System.err.println("Exception --> " + e);
 				} 
 			   
 			}
@@ -257,6 +262,7 @@ class WorldMinesweeper {
 					openSound(".//res//sound_effect_flag.wav");
 				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 					e.printStackTrace();
+					System.err.println("Exception --> " + e);
 				}
 			}
 			
@@ -301,8 +307,8 @@ class WorldMinesweeper {
 		try {
 			TimeUnit.MILLISECONDS.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.err.println("Exception --> " + e);
 		}
 		
 		// inserisco i fiori 
@@ -313,8 +319,8 @@ class WorldMinesweeper {
 						TimeUnit.MILLISECONDS.sleep(100);
 						matrix[i][j].placeFlower();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
+						System.err.println("Exception --> " + e);
 					}
 				}
 			}
@@ -399,8 +405,8 @@ class WorldMinesweeper {
 
 	
 	// ######################## Scoreboard ########################
-	public static void OpenScoreboard(String player_name, String difficulty_mode) throws Exception {
-		getScoreboard(difficulty_mode);
+	public static void OpenScoreboard(String player_name, String difficulty) throws Exception {
+		getScoreboard(difficulty);
 		
 		
 		// utilizzo le JLabel anzichè semplici String perchè voglio colorare la stringa appena aggiunta
@@ -432,20 +438,20 @@ class WorldMinesweeper {
 		
 	}
 	
-	private static void newScoreScoreboard(String name, String difficulty_mode) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new FileWriter(".//res//scoreboard" + "_" + difficulty_mode, true)); //true = append
+	private static void newScoreScoreboard(String name) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(".//res//scoreboard" + "_" + current_difficulty, true)); //true = append
         bw.write("" + name + " -->  Seconds: " + timer.getTimer() + "\n");
         bw.close();
-        getScoreboard(difficulty_mode); //ottengo la scoreboard
+        getScoreboard(current_difficulty); //ottengo la scoreboard
 	}
 	
-	private static void getScoreboard(String difficulty_mode) {
+	private static void getScoreboard(String difficulty) {
 		int DIM_MAX = 11;
 		list = new String[DIM_MAX]; //la classifica è una top 10
 		
 		//leggo le righe
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(".//res//scoreboard" + "_" + difficulty_mode));
+			BufferedReader br = new BufferedReader(new FileReader(".//res//scoreboard" + "_" + difficulty));
 			
 			for (int i=0; i<DIM_MAX; i++) {
 				if ((list[i] = br.readLine()) != null);
@@ -453,7 +459,7 @@ class WorldMinesweeper {
 			
 			br.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Exception --> " + e);
 		}
 		
 		//ordino
@@ -462,13 +468,13 @@ class WorldMinesweeper {
 		// scrivo i nuovi valori ordinati
 		BufferedWriter bw;
 		try {
-			bw = new BufferedWriter(new FileWriter(".//res//scoreboard" + "_" + difficulty_mode, false)); //false = append
+			bw = new BufferedWriter(new FileWriter(".//res//scoreboard" + "_" + difficulty, false)); //false = append
 			for (int i=0; i<DIM_MAX-1; i++) {
 	        	if (list[i] != null) bw.write("" + list[i] + "\n");
 	        }
 	        bw.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Exception --> " + e);
 		} 		
 		
 	}
