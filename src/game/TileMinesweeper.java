@@ -23,14 +23,14 @@ public class TileMinesweeper{
 	private boolean error;
 	private int amountOfNearBombs;
 	
-	Color color1 = new Color (25, 118, 210);	// blu
-	Color color2 = new Color (56, 142, 60); 	// verde
-	Color color3 = new Color (211, 47, 47); 	// rosso
- 	Color color4 = new Color (123, 31, 162); 	// viola
-	Color color5 = new Color (245, 231, 0);		// giallo
+	Color color1 = new Color (25, 118, 210);	// blue
+	Color color2 = new Color (56, 142, 60); 	// green
+	Color color3 = new Color (211, 47, 47); 	// red
+ 	Color color4 = new Color (123, 31, 162); 	// purple
+	Color color5 = new Color (245, 231, 0);	// yellow
 	Color color6 = new Color (181, 30, 142);	// ...
-	Color color7 = new Color (0, 80, 107);		// ...
-	Color color8 = new Color (0, 0, 0);			// nero
+	Color color7 = new Color (0, 80, 107);	// ...
+	Color color8 = new Color (0, 0, 0);		// black
 	
 	private static int width = FrameMinesweeper.getScreenWidth()/WorldMinesweeper.getROWS(); 
 	private static int height = FrameMinesweeper.getScreenHeight()/WorldMinesweeper.getCOLS(); 
@@ -99,8 +99,9 @@ public class TileMinesweeper{
 	
 	public void placeFlag() {
 		if(flag) flag = false;
-		else{
-			if(!opened && WorldMinesweeper.getN_FLAGS() > 0) flag = true; // metto la bandiera solo se la casella non � gi� aperta e non ho raggiunto il numero massimo di bandiere inseribili
+		else if (!opened && WorldMinesweeper.getN_FLAGS() > 0){
+			// I put the flag only if the box is not already open and I have not reached the maximum number of insertable flags	
+			flag = true; 
 		}
 	}
 	

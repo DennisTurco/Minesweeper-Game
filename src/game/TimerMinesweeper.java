@@ -17,9 +17,10 @@ class TimerMinesweeper {
 		task = new TimerTask() {
 			public void run() {
 				
-				TIMER += 0.1; //incremento di un decimo di secondo
+				// increase by a tenth of a second
+				TIMER += 0.1; 
 				
-				// elimino le ultime cifre decimali
+				// delete the last decimal places
 				BigDecimal bd = new BigDecimal(TIMER); 
 				BigDecimal res = bd.setScale(1, RoundingMode.HALF_UP);
 				TIMER = res.floatValue();

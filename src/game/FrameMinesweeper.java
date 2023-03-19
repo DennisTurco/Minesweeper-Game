@@ -56,7 +56,8 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		tool_bar.setFloatable(false);
 		this.add(tool_bar, BorderLayout.NORTH);
 		
-		JPanel panel = new JPanel(); // mi serve per centrare gli elementi
+		// it needs to center the elements
+		JPanel panel = new JPanel(); 
 		
 		Icon icon1 = new ImageIcon("res/tile_green_normal.png");
 		Icon icon2 = new ImageIcon("res/flag.png");
@@ -88,7 +89,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		tool_bar.add(panel);
 		// ------
 		
-		//TODO: farla funzionare nella classe a parte richiamandola
+		//TODO: run it in the class apart by calling it
 		addWindowListener(this);
 		
 		// Menu Bar
@@ -170,8 +171,8 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 		remove_all_flags.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK)); // ctrl+f
 		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK)); // alt+f4
 		
-		ImageIcon image = new ImageIcon(".//res//bomb.png"); //crea un'icona
-		setIconImage(image.getImage());	//cambia l'icona del frame
+		ImageIcon image = new ImageIcon(".//res//bomb.png"); // create the icon
+		setIconImage(image.getImage());	// change the frame's icon
 		
 		// Custom Cursor
 		setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(".//res//cursor.png").getImage(),new Point(0,0),"custom cursor"));
@@ -183,7 +184,7 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 	private void Init() {
 		this.setTitle("Minesweeper");
 		this.setResizable(false);
-        this.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - getScreenWidth()) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - getScreenHeight()) / 2); // setto la finestra al centro
+        this.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - getScreenWidth()) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - getScreenHeight()) / 2); // set the window in the middle
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -322,10 +323,10 @@ class FrameMinesweeper extends JFrame implements MouseListener, WindowListener, 
 			System.exit(EXIT_ON_CLOSE);
 		}
 		else if (command.equals("Share")) {
-			//messaggio pop-up
+			// pop-up message
 			JOptionPane.showMessageDialog(null, "Share link copied to clipboard!");
 	        
-			//copio nella clipboard il link
+			// I copy in the clipboard the link
 	        String testString = "https://github.com/DennisTurco/Minesweeper-Game"; 
 	        StringSelection stringSelectionObj = new StringSelection(testString);
 	        Clipboard clipboardObj = Toolkit.getDefaultToolkit().getSystemClipboard();
