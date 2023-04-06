@@ -1,35 +1,32 @@
-![Logo](https://user-images.githubusercontent.com/57963761/194574827-ae4a8f41-62fb-4e28-bd7a-8afef886c9ac.png)
 
-# Minesweeper Game
+![icon](https://user-images.githubusercontent.com/57963761/230503459-79155b02-d96e-4964-96c4-c4b9cef30872.png)
 
-Minesweeper game made in java.
+# Chess Game
 
+This is a chess game made with python.
 
 ## Installation
-To run the program, you have to download only the installer "**<ins>Minesweeper v1.0 setup file.exe</ins>**"<br>
-*Note: to run the executable you need jdk18*: https://www.oracle.com/java/technologies/downloads 
+
+For install the game you have to download the whole project and run it with python compiler:
+`python frame.py`
 
 ## Demo
 
-![gifgame](https://user-images.githubusercontent.com/57963761/194577195-c6990e56-5df9-4ab1-a850-1a01536a124b.gif)
-
-
 ## Screenshots
 
-![Cattura1](https://user-images.githubusercontent.com/57963761/188160048-fa6c9300-ed7d-4fa8-b929-88204d786ff2.PNG)
-![Cattura2](https://user-images.githubusercontent.com/57963761/188160057-1755c0a3-85b0-4dc9-bfb2-47560382b4fa.PNG)
-![Captursdfe](https://user-images.githubusercontent.com/57963761/194575683-23880fd6-7eac-4ea0-a17a-ed12168b56cd.PNG)
+![Capture1](https://user-images.githubusercontent.com/57963761/230503243-f7d41579-0b0d-40de-96f6-a5df39ea9648.PNG)
+
+![Capture2](https://user-images.githubusercontent.com/57963761/230503247-59ca99c9-90ac-4245-aa7c-3facc848d99e.PNG)
 
 
 ## Licence
 
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+![https://img.shields.io/badge/License-MIT-green.svg](https://img.shields.io/badge/License-MIT-green.svg)
 
 ## Authors
 
 - [@DennisTurco](https://www.github.com/DennisTurco)
 
-
 ## Support
 
-For support, email: dennisturco@gmail.com
+For support, email: [dennisturco@gmail.com](mailto:dennisturco@gmail.com)
